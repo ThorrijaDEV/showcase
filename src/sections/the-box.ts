@@ -11,7 +11,7 @@
 import { TheBoxModel, type BoxInput, type BoxOutput } from "@models/the-box";
 import { foundryRuleSet, State, Engine } from "@models/the-box";
 import { interpret, buildExport, exportJson, type Level } from "./the-box-levels";
-import { getLang } from "../i18n";
+import { getLang, applyTranslations } from "../i18n";
 import { dict } from "../i18n/dict";
 
 function t(key: string): string {
@@ -252,6 +252,8 @@ export function renderTheBox(container: HTMLElement): void {
       <p data-i18n="doc_box_e_body"></p>
     </section>
   `;
+
+  applyTranslations();
 
   // ------------------------------------------------------------------
   // Elements

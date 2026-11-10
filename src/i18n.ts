@@ -53,18 +53,20 @@ export function setLang(lang: Lang): void {
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc && desc) metaDesc.setAttribute("content", desc[lang]);
 
-  // Translate every [data-i18n="key"] node
+  applyTranslations();
+
+  // Notify any section-specific renderers that language changed
+  document.dispatchEvent(new Event("showcase:lang"));
+}
+
+export function applyTranslations(): void {
+  const lang = currentLang;
   document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n")!;
     const entry = dict[key];
     if (!entry) return;
-    const value = entry[lang];
-    // Allow simple function-valued entries (e.g. test counts)
-    el.innerHTML = value;
+    el.innerHTML = entry[lang];
   });
-
-  // Notify any section-specific renderers that language changed
-  document.dispatchEvent(new Event("showcase:lang"));
 }
 
 /** Build the language selector UI (two toggle buttons). */
