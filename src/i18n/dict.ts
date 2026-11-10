@@ -21,6 +21,8 @@ export const dict: Record<string, { en: string; es: string }> = {
     en: "Fidelity: algorithmic reconstruction",
     es: "Fidelidad: reconstrucción algorítmica",
   },
+  lang_label_en: { en: "EN", es: "EN" },
+  lang_label_es: { en: "ES", es: "ES" },
   chip_no_hardware: {
     en: "No external hardware",
     es: "Sin hardware externo",
