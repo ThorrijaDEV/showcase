@@ -10,6 +10,14 @@
 
 import { TheBoxModel, type BoxInput } from "@models/the-box";
 import { foundryRuleSet, State, Engine } from "@models/the-box";
+import { getLang } from "../i18n";
+import { dict } from "../i18n/dict";
+
+function t(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 export function renderTheBox(container: HTMLElement): void {
   const model = new TheBoxModel();
@@ -20,24 +28,24 @@ export function renderTheBox(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Configuración del sustrato</div>
-              <div class="card-subtitle">Arc-incidence multi-digraph · 6 reglas · motor determinista</div>
+              <div class="card-title" data-i18n="box_substrate_title"></div>
+              <div class="card-subtitle" data-i18n="box_substrate_sub"></div>
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Nodos iniciales</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_nnodes"></label>
             <input type="number" id="box-nnodes" value="20" min="1" max="200" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Arcos iniciales</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_narcs"></label>
             <input type="number" id="box-narcs" value="40" min="0" max="400" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Dimensión</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_dim"></label>
             <input type="number" id="box-dim" value="4" min="1" max="8" style="width:60px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Semilla</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_seed"></label>
             <input type="number" id="box-seed" value="11" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Pasos</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_steps"></label>
             <input type="number" id="box-steps" value="100" min="1" max="2000" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Política</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_policy"></label>
             <select id="box-policy" style="width:120px; font-family:var(--mono); font-size:12px;">
               <option value="uniform">Uniform</option>
               <option value="canonical">Canonical</option>
@@ -46,42 +54,42 @@ export function renderTheBox(container: HTMLElement): void {
             </select>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Max nodos</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_maxnodes"></label>
             <input type="number" id="box-maxnodes" value="160" min="1" max="1000" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Max arcos</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_maxarcs"></label>
             <input type="number" id="box-maxarcs" value="700" min="1" max="5000" style="width:80px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Spread de etiquetas</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_tagspread"></label>
             <input type="number" id="box-tagspread" value="1" min="1" max="10" style="width:60px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <button id="box-run" class="btn primary">Ejecutar modelo</button>
-            <button id="box-reset" class="btn secondary">Resetear</button>
+            <button id="box-run" class="btn primary" data-i18n="box_run"></button>
+            <button id="box-reset" class="btn secondary" data-i18n="box_reset"></button>
           </div>
         </div>
 
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Controles de paso a paso</div>
-              <div class="card-subtitle">Ejecución un paso a la vez con visualización del evento</div>
+              <div class="card-title" data-i18n="box_steps_title"></div>
+              <div class="card-subtitle" data-i18n="box_steps_sub"></div>
             </div>
           </div>
           <div class="controls mt-8">
-            <button id="box-step1" class="btn secondary">Paso 1</button>
-            <button id="box-step10" class="btn secondary">Paso 10</button>
-            <button id="box-runall" class="btn primary">Ejecutar todo</button>
-            <button id="box-pause" class="btn secondary" disabled>Pausar</button>
+            <button id="box-step1" class="btn secondary" data-i18n="box_step1"></button>
+            <button id="box-step10" class="btn secondary" data-i18n="box_step10"></button>
+            <button id="box-runall" class="btn primary" data-i18n="box_runall"></button>
+            <button id="box-pause" class="btn secondary" disabled data-i18n="box_pause"></button>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Evento actual</div>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;" data-i18n="box_event_title"></label>
             <div id="box-current-event" style="font-family:var(--mono); font-size:11px; background:#121216; border:1px solid #2a2a3a; padding:8px; border-radius:4px; color:var(--text);">
-              <div style="color:var(--text-muted);">Ningún evento aún</div>
+              <div style="color:var(--text-muted);" data-i18n="box_no_event"></div>
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Hash del grafo (proveniencia)</div>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;" data-i18n="box_hash_title"></label>
             <div id="box-graph-hash" style="font-family:var(--mono); font-size:10px; background:#0c0c10; border:1px solid #2a2a3a; padding:8px; border-radius:4px; color:#06b6d4; word-break:break-all;">
               —
             </div>
@@ -93,8 +101,8 @@ export function renderTheBox(container: HTMLElement): void {
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Visualización del sustrato</div>
-              <div class="card-subtitle">Nodos = puntos (color por etiqueta) · Arcos = líneas (color por etiqueta de arco) · Retirados = desvanecidos</div>
+              <div class="card-title" data-i18n="box_viz_title"></div>
+              <div class="card-subtitle" data-i18n="box_viz_sub"></div>
             </div>
           </div>
           <div class="canvas-container" style="height:300px; display:flex; align-items:center; justify-content:center; background:#0c0c10; border:1px solid #2a2a3a; border-radius:4px;">
@@ -107,23 +115,23 @@ export function renderTheBox(container: HTMLElement): void {
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Observables (nombrados)</div>
-                <div class="card-subtitle">Medi­das estructurales del sustrato en cada paso</div>
+                <div class="card-title" data-i18n="box_observables_title"></div>
+                <div class="card-subtitle" data-i18n="box_observables_sub"></div>
               </div>
             </div>
             <div id="box-observables" style="font-family:var(--mono); font-size:10px; color:var(--text-muted); max-height:200px; overflow-y:auto; line-height:1.6;">
-              <div style="color:var(--text-muted);">Esperando ejecución...</div>
+              <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
             </div>
           </div>
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Identidad y linaje</div>
-                <div class="card-subtitle">Profundidad, clases de fusión, fracción de fusiones</div>
+                <div class="card-title" data-i18n="box_identity_title"></div>
+                <div class="card-subtitle" data-i18n="box_identity_sub"></div>
               </div>
             </div>
             <div id="box-identity" style="font-family:var(--mono); font-size:11px; color:var(--text-muted); line-height:1.8;">
-              <div style="color:var(--text-muted);">Esperando ejecución...</div>
+              <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
             </div>
           </div>
         </div>
@@ -133,17 +141,17 @@ export function renderTheBox(container: HTMLElement): void {
     <div class="card mt-16">
       <div class="card-header">
         <div>
-          <div class="card-title">Reglas del foundry (datas, no código)</div>
-          <div class="card-subtitle">Seis reescrituras locales del sustrato, cada una con predicado, selectores y efectos</div>
+          <div class="card-title" data-i18n="box_rules_title"></div>
+          <div class="card-subtitle" data-i18n="box_rules_sub"></div>
         </div>
       </div>
       <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); line-height:1.8; padding:8px;">
-        <div><span style="color:#06b6d4;">GATHER</span>: Dos partidarios del mismo hub se conectan directamente. (tag=1, w=0.6)</div>
-        <div><span style="color:#10b981;">BOND</span>: Ancla y vecino de salida que comparten 2 veci­nos de entrada se enlazan. (tag=2, w=0.4)</div>
-        <div><span style="color:#f59e0b;">TAG_PROP</span>: La ancla copia la etiqueta de un vecino de salida.</div>
-        <div><span style="color:#ef4444;">QUIET</span>: Nodo sin flujo de entrada durante 30 pasos se marca como QUIET (tag=5).</div>
-        <div><span style="color:#a855f7;">DESCEND</span>: Nodo QUIET con espacio genera hijo con su etiqueta y payload con jitter. (tag=3, w=0.9)</div>
-        <div><span style="color:#8b5cf6;">FUSE</span>: Dos hermanos con etiqueta igual y payload cercano se identifican. El gemelo se retira; el testigo EQUIV perdura. (tag=4)</div>
+        <div data-i18n="box_gather"></div>
+        <div data-i18n="box_bond"></div>
+        <div data-i18n="box_tagprop"></div>
+        <div data-i18n="box_quiet"></div>
+        <div data-i18n="box_descend"></div>
+        <div data-i18n="box_fuse"></div>
       </div>
     </div>
   `;
@@ -178,7 +186,6 @@ export function renderTheBox(container: HTMLElement): void {
   // ------------------------------------------------------------------
   let currentInput: BoxInput | null = null;
   let currentState: State | null = null;
-  let currentRuleset = foundryRuleSet();
   let currentEngine: Engine | null = null;
   let currentStep = 0;
   let animationId: number | null = null;
@@ -187,7 +194,7 @@ export function renderTheBox(container: HTMLElement): void {
   // Tag colors
   const TAG_COLORS: Record<number, string> = {
     0: "#666666",
-    1: "#06b6d4", // PULL
+    1: "#06b6c4", // PULL
     2: "#10b981", // BOND
     3: "#f59e0b", // DESCEND
     4: "#8b5cf6", // EQUIV
@@ -226,7 +233,6 @@ export function renderTheBox(container: HTMLElement): void {
     const nodes = [...state.nodes.values()];
     const arcs = [...state.arcs.values()];
 
-    // Layout: simple force-directed-ish circular layout by id
     const cx = displayW / 2;
     const cy = displayH / 2;
     const radius = Math.min(displayW, displayH) / 2 * 0.75;
@@ -241,16 +247,13 @@ export function renderTheBox(container: HTMLElement): void {
       nodePositions.set(n.id, { x, y });
     }
 
-    // Draw arcs first (behind nodes)
     for (const a of arcs) {
       if (!state.isNode(a.src) || !state.isNode(a.dst)) continue;
       const p1 = nodePositions.get(a.src);
       const p2 = nodePositions.get(a.dst);
       if (!p1 || !p2) continue;
 
-      const isRetiredSrc = state.isRetired(a.src);
-      const isRetiredDst = state.isRetired(a.dst);
-      const faded = isRetiredSrc || isRetiredDst;
+      const faded = state.isRetired(a.src) || state.isRetired(a.dst);
 
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
@@ -262,7 +265,6 @@ export function renderTheBox(container: HTMLElement): void {
       ctx.globalAlpha = 1.0;
     }
 
-    // Draw nodes
     for (const n of nodes) {
       const p = nodePositions.get(n.id)!;
       const isRetired = state.isRetired(n.id);
@@ -274,7 +276,6 @@ export function renderTheBox(container: HTMLElement): void {
       ctx.fill();
       ctx.globalAlpha = 1.0;
 
-      // Node id label for small graphs
       if (nodes.length <= 30) {
         ctx.fillStyle = "#666666";
         ctx.font = "8px monospace";
@@ -283,7 +284,6 @@ export function renderTheBox(container: HTMLElement): void {
       }
     }
 
-    // Legend
     const tagCounts = new Map<number, number>();
     for (const n of nodes) {
       tagCounts.set(n.tag, (tagCounts.get(n.tag) ?? 0) + 1);
@@ -330,7 +330,7 @@ export function renderTheBox(container: HTMLElement): void {
       return;
     }
     const ruleColors: Record<string, string> = {
-      GATHER: "#06b6d4",
+      GATHER: "#06b6c4",
       BOND: "#10b981",
       TAG_PROP: "#f59e0b",
       QUIET: "#ef4444",
@@ -359,9 +359,6 @@ export function renderTheBox(container: HTMLElement): void {
       const lastStage = stages[stages.length - 1];
       currentStep = stages.length - 1;
 
-      // Rebuild the stepping engine from the same deterministic inputs so
-      // single-step controls (Paso 1 / Paso 10 / Ejecutar todo) continue
-      // from the exact state the full run produced.
       const ruleset = foundryRuleSet();
       const state = State.random(input.nNodes, input.nArcs, input.dim, input.seed,
         input.tagSpread, { maxNodes: input.maxNodes, maxArcs: input.maxArcs });
@@ -417,6 +414,7 @@ export function renderTheBox(container: HTMLElement): void {
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     isRunning = false;
     pauseBtn.disabled = true;
+    pauseBtn.textContent = "Pausar";
     runAllBtn.disabled = false;
     currentState = null;
     currentEngine = null;
@@ -424,8 +422,8 @@ export function renderTheBox(container: HTMLElement): void {
     canvasEl.getContext("2d")!.clearRect(0, 0, canvasEl.width, canvasEl.height);
     currentEventEl.innerHTML = "<div style='color:var(--text-muted);'>Resetado</div>";
     graphHashEl.textContent = "—";
-    observablesEl.innerHTML = "<div style='color:var(--text-muted);'>Esperando ejecución...</div>";
-    identityEl.innerHTML = "<div style='color:var(--text-muted);'>Esperando ejecución...</div>";
+    observablesEl.innerHTML = "<div style='color:var(--text-muted);' data-i18n=\"wtm_waiting\"></div>";
+    identityEl.innerHTML = "<div style='color:var(--text-muted);' data-i18n=\"wtm_waiting\"></div>";
   });
 
   step1Btn.addEventListener("click", () => stepRender());

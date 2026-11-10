@@ -20,6 +20,9 @@ import { renderGenerativeEngine } from "./sections/generative-engine";
 import { renderFidelity } from "./sections/fidelity";
 import { renderTheBox } from "./sections/the-box";
 
+import { initI18n, getLang } from "./i18n";
+import { dict } from "./i18n/dict";
+
 // ---------------------------------------------------------------------------
 // Model instances (singletons — stateful, reset per demo run)
 // ---------------------------------------------------------------------------
@@ -47,55 +50,26 @@ type SectionId =
 
 interface SectionDef {
   id: SectionId;
-  title: string;
-  hint: string;
+  titleKey: string;
+  hintKey: string;
   render: (container: HTMLElement) => void;
 }
 
 const sections: SectionDef[] = [
-  {
-    id: "overview",
-    title: "Overview",
-    hint: "Proyectos",
-    render: renderHero,
-  },
-  {
-    id: "wtm",
-    title: "Wi-Fi Time Machine",
-    hint: "WTM",
-    render: renderWifiTimeMachine,
-  },
-  {
-    id: "ble",
-    title: "BLE Radar",
-    hint: "BLE",
-    render: renderBleRadar,
-  },
-  {
-    id: "pem",
-    title: "Process Ecosystem Monitor",
-    hint: "PEM",
-    render: renderProcessEcosystem,
-  },
-  {
-    id: "gen",
-    title: "Generative Engine",
-    hint: "GEN",
-    render: renderGenerativeEngine,
-  },
-  {
-    id: "box",
-    title: "The Box",
-    hint: "BOX",
-    render: renderTheBox,
-  },
-  {
-    id: "fidelity",
-    title: "Fidelity & Methodology",
-    hint: "FID",
-    render: renderFidelity,
-  },
+  { id: "overview", titleKey: "nav_overview", hintKey: "nav_overview", render: renderHero },
+  { id: "wtm", titleKey: "nav_wtm", hintKey: "nav_wtm", render: renderWifiTimeMachine },
+  { id: "ble", titleKey: "nav_ble", hintKey: "nav_ble", render: renderBleRadar },
+  { id: "pem", titleKey: "nav_pem", hintKey: "nav_pem", render: renderProcessEcosystem },
+  { id: "gen", titleKey: "nav_gen", hintKey: "nav_gen", render: renderGenerativeEngine },
+  { id: "box", titleKey: "nav_box", hintKey: "nav_box", render: renderTheBox },
+  { id: "fidelity", titleKey: "nav_fidelity", hintKey: "nav_fidelity", render: renderFidelity },
 ];
+
+function dictGet(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 // ---------------------------------------------------------------------------
 // Shell
@@ -109,9 +83,12 @@ function buildShell(container: HTMLElement): { main: HTMLElement; setSection: (i
   brand.className = "brand";
   brand.innerHTML = `
     <h1>THORRIJA</h1>
-    <p>Engineering Showcase &bull; Modelos deterministas reconstruidos desde c&oacute;digo fuente</p>
+    <p data-i18n="brand_line"></p>
   `;
   sidebar.appendChild(brand);
+
+  // Language selector (EN | ES), mounted under the brand block.
+  sidebar.appendChild(initI18n());
 
   const nav = document.createElement("nav");
   nav.className = "nav";
@@ -123,34 +100,37 @@ function buildShell(container: HTMLElement): { main: HTMLElement; setSection: (i
   container.appendChild(main);
 
   let currentId: SectionId = "overview";
+  const items: HTMLElement[] = [];
+
+  function updateNavLabels(): void {
+    items.forEach((item) => {
+      const itemId = item.dataset.section as SectionId | undefined;
+      if (!itemId) return;
+      const sec = sections.find((s) => s.id === itemId)!;
+      item.querySelector(".item-title")!.textContent = dictGet(sec.titleKey);
+      item.querySelector(".item-hint")!.textContent = dictGet(sec.hintKey);
+    });
+  }
 
   function setSection(id: SectionId) {
     currentId = id;
 
-    // Update nav states
-    const items = nav.querySelectorAll<HTMLElement>(".nav-item");
     items.forEach((item) => {
-      const itemId = item.dataset.section as SectionId | undefined;
-      if (itemId === id) {
-        item.classList.add("active");
-      } else {
-        item.classList.remove("active");
-      }
+      item.classList.toggle("active", item.dataset.section === id);
     });
 
-    // Render section
     main.innerHTML = "";
     const sec = sections.find((s) => s.id === id)!;
 
     const header = document.createElement("div");
     header.className = "section-header";
     header.innerHTML = `
-      <h2>${sec.title}</h2>
-      <p>M&oacute;dulo computacional determinista reconstruido desde el c&oacute;digo fuente original.</p>
+      <h2 data-i18n="${sec.titleKey}"></h2>
+      <p data-i18n="section_lede"></p>
       <div class="meta">
-        <span>Fidelidad: reconstrucci&oacute;n algor&iacute;tmica</span>
-        <span>Sin hardware externo</span>
-        <span>Sin claves de API</span>
+        <span data-i18n="chip_fidelity"></span>
+        <span data-i18n="chip_no_hardware"></span>
+        <span data-i18n="chip_no_api"></span>
       </div>
     `;
     main.appendChild(header);
@@ -158,22 +138,34 @@ function buildShell(container: HTMLElement): { main: HTMLElement; setSection: (i
     sec.render(main);
   }
 
-  // Build nav items
   sections.forEach((sec) => {
     const item = document.createElement("a");
     item.className = "nav-item";
     item.href = "#";
     item.dataset.section = sec.id;
-    item.textContent = sec.title;
+
+    const title = document.createElement("span");
+    title.className = "item-title";
+    title.textContent = dictGet(sec.titleKey);
+
     const hint = document.createElement("span");
     hint.className = "item-hint";
-    hint.textContent = sec.hint;
+    hint.textContent = dictGet(sec.hintKey);
+
+    item.appendChild(title);
     item.appendChild(hint);
+    items.push(item);
+
     item.addEventListener("click", (e) => {
       e.preventDefault();
       setSection(sec.id);
     });
     nav.appendChild(item);
+  });
+
+  // React to language switches (nav labels are outside [data-i18n] flow).
+  document.addEventListener("showcase:lang", () => {
+    updateNavLabels();
   });
 
   // Start

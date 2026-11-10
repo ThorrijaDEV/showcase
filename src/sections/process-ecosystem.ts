@@ -7,13 +7,21 @@
  */
 
 import { ProcessEcosystemModel, type ProcModelInput, type ProcSnapshot } from "@models/process-ecosystem";
+import { getLang } from "../i18n";
+import { dict } from "../i18n/dict";
+
+function t(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 const DEFAULT_SNAPS: ProcSnapshot[] = [
-  { pid: 1, ppid: 0, comm: "systemd", state: "S", utime: 100, stime: 10, numThreads: 5, starttime: 200, vsize: 60*1024*1024, rss: 60*1024*1024, user: "root" },
-  { pid: 2, ppid: 0, comm: "kthreadd", state: "S", utime: 0, stime: 0, numThreads: 1, starttime: 200, vsize: 1*1024*1024, rss: 1*1024*1024, user: null },
-  { pid: 10, ppid: 1, comm: "dbus", state: "S", utime: 200, stime: 50, numThreads: 2, starttime: 300, vsize: 12*1024*1024, rss: 12*1024*1024, user: "dbus" },
-  { pid: 100, ppid: 10, comm: "browser", state: "R", utime: 1000, stime: 200, numThreads: 10, starttime: 400, vsize: 980*1024*1024, rss: 980*1024*1024, user: "user" },
-  { pid: 110, ppid: 100, comm: "renderer", state: "R", utime: 800, stime: 100, numThreads: 4, starttime: 450, vsize: 210*1024*1024, rss: 210*1024*1024, user: "user" },
+  { pid: 1, ppid: 0, comm: "systemd", state: "S", utime: 100, stime: 10, numThreads: 5, starttime: 200, vsize: 60 * 1024 * 1024, rss: 60 * 1024 * 1024, user: "root" },
+  { pid: 2, ppid: 0, comm: "kthreadd", state: "S", utime: 0, stime: 0, numThreads: 1, starttime: 200, vsize: 1 * 1024 * 1024, rss: 1 * 1024 * 1024, user: null },
+  { pid: 10, ppid: 1, comm: "dbus", state: "S", utime: 200, stime: 50, numThreads: 2, starttime: 300, vsize: 12 * 1024 * 1024, rss: 12 * 1024 * 1024, user: "dbus" },
+  { pid: 100, ppid: 10, comm: "browser", state: "R", utime: 1000, stime: 200, numThreads: 10, starttime: 400, vsize: 980 * 1024 * 1024, rss: 980 * 1024 * 1024, user: "user" },
+  { pid: 110, ppid: 100, comm: "renderer", state: "R", utime: 800, stime: 100, numThreads: 4, starttime: 450, vsize: 210 * 1024 * 1024, rss: 210 * 1024 * 1024, user: "user" },
 ];
 
 export function renderProcessEcosystem(container: HTMLElement): void {
@@ -25,34 +33,34 @@ export function renderProcessEcosystem(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Entrada de procesos (sintética /proc)</div>
-              <div class="card-subtitle">Instantáneas de procesos para este tick</div>
+              <div class="card-title" data-i18n="pem_input_title"></div>
+              <div class="card-subtitle" data-i18n="pem_input_sub"></div>
             </div>
           </div>
           <textarea id="pem-snapshots" rows="12" style="width:100%; font-family:var(--mono); font-size:11px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); color:var(--text); padding:12px; resize:vertical;">${JSON.stringify(DEFAULT_SNAPS, null, 2)}</textarea>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Intervalo (s) · CLK_TCK · Núcleos</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="pem_label_interval"></label>
             <div style="display:flex; gap:12px;">
-              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">intervalSec</label><input type="number" id="pem-interval" value="0.2" step="0.1" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
-              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">clkTick</label><input type="number" id="pem-clktick" value="100" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
-              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;">ncores</label><input type="number" id="pem-ncores" value="1" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
+              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="pem_label_interval_sec"></label><input type="number" id="pem-interval" value="0.2" step="0.1" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
+              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="pem_label_clktick"></label><input type="number" id="pem-clktick" value="100" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
+              <div style="flex:1;"><label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="pem_label_ncores"></label><input type="number" id="pem-ncores" value="1" style="width:70px; font-family:var(--mono); font-size:12px;"></div>
             </div>
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px; margin-top:8px;">Wall time (s)</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px; margin-top:8px;" data-i18n="pem_label_walltime"></label>
             <input type="number" id="pem-walltime" value="0" style="width:100px; font-family:var(--mono); font-size:12px;">
           </div>
-          <button id="pem-run" class="btn primary">Ejecutar tick</button>
-          <button id="pem-reset" class="btn secondary">Reiniciar ecosistema</button>
+          <button id="pem-run" class="btn primary" data-i18n="pem_run"></button>
+          <button id="pem-reset" class="btn secondary" data-i18n="pem_reset"></button>
         </div>
 
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Eventos del tick (diff)</div>
-              <div class="card-subtitle">Nacimientos, muertes, picos de CPU, huérfanos</div>
+              <div class="card-title" data-i18n="pem_diff_title"></div>
+              <div class="card-subtitle" data-i18n="pem_diff_sub"></div>
             </div>
           </div>
           <div id="pem-diff" style="font-family:var(--mono); font-size:12px; color:var(--text-muted); max-height:200px; overflow-y:auto;">
-            <div style="color:var(--text-muted);">Esperando ejecución...</div>
+            <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
           </div>
         </div>
       </div>
@@ -61,8 +69,8 @@ export function renderProcessEcosystem(container: HTMLElement): void {
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Estado de procesos</div>
-              <div class="card-subtitle">Ciclo de vida, CPU%, RSS, huérfano, pico</div>
+              <div class="card-title" data-i18n="pem_state_title"></div>
+              <div class="card-subtitle" data-i18n="pem_state_sub"></div>
             </div>
           </div>
           <table id="pem-table">
@@ -74,12 +82,12 @@ export function renderProcessEcosystem(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Árbol de procesos</div>
-              <div class="card-subtitle">Raíces, hilos del kernel, memoria RAM del sistema</div>
+              <div class="card-title" data-i18n="pem_tree_title"></div>
+              <div class="card-subtitle" data-i18n="pem_tree_sub"></div>
             </div>
           </div>
           <div id="pem-tree" style="font-family:var(--mono); font-size:12px; color:var(--text-muted); line-height:2; background:#0a0a0c; padding:16px; border-radius:var(--radius); border:1px solid var(--panel-border);">
-            <div style="color:var(--text-muted);">Esperando ejecución...</div>
+            <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
           </div>
         </div>
       </div>
@@ -88,21 +96,21 @@ export function renderProcessEcosystem(container: HTMLElement): void {
     <div class="card mt-16">
       <div class="card-header">
         <div>
-          <div class="card-title">Métricas del sistema</div>
-          <div class="card-subtitle">CPU %, RAM %, carga, historial de ticks</div>
+          <div class="card-title" data-i18n="pem_metrics_title"></div>
+          <div class="card-subtitle" data-i18n="pem_metrics_sub"></div>
         </div>
       </div>
       <div class="grid-3">
         <div style="background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); padding:16px;">
-          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;">CPU sistema</div>
+          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;" data-i18n="pem_sys_cpu"></div>
           <div id="pem-sys-cpu" style="font-size:28px; font-weight:700; color:var(--fg-cyan); font-variant-numeric:tabular-nums;">—</div>
         </div>
         <div style="background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); padding:16px;">
-          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;">RAM sistema</div>
+          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;" data-i18n="pem_sys_ram"></div>
           <div id="pem-sys-ram" style="font-size:28px; font-weight:700; color:var(--fg-green); font-variant-numeric:tabular-nums;">—</div>
         </div>
         <div style="background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); padding:16px;">
-          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;">Procesos vivos</div>
+          <div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;" data-i18n="pem_alive"></div>
           <div id="pem-alive" style="font-size:28px; font-weight:700; color:var(--fg-blue); font-variant-numeric:tabular-nums;">—</div>
         </div>
       </div>
@@ -135,7 +143,7 @@ export function renderProcessEcosystem(container: HTMLElement): void {
     try {
       snaps = JSON.parse(snapInput.value);
     } catch {
-      diffEl.innerHTML = `<div style="color:var(--fg-red);">JSON inválido</div>`;
+      diffEl.innerHTML = `<div style="color:var(--fg-red);">${t("pem_json_invalid")}</div>`;
       return;
     }
 
@@ -154,11 +162,11 @@ export function renderProcessEcosystem(container: HTMLElement): void {
       // Diff
       const d = out.final.diff;
       diffEl.innerHTML = `
-        <div style="color:var(--fg-green);">▲ nacimientos: ${d.births.length} (${d.births.map(b => `${b.pid}:${b.comm}`).join(", ") || "—"})</div>
-        <div style="color:var(--fg-red);">▼ muertes: ${d.deaths.length} (${d.deaths.map(d => `${d.pid}:${d.comm}`).join(", ") || "—"})</div>
-        <div style="color:var(--fg-amber);">◆ picos CPU: ${d.spikes.length}</div>
-        <div style="color:var(--fg-purple);">● huérfanos: ${d.orphans.length}</div>
-        <div style="color:var(--text-muted);">sistema CPU: ${d.cpuPct.toFixed(1)}% · RAM: ${d.ramPct.toFixed(1)}% · vivos: ${d.alive}</div>
+        <div style="color:var(--fg-green);">▲ ${t("pem_births")}: ${d.births.length} (${d.births.map(b => `${b.pid}:${b.comm}`).join(", ") || "—"})</div>
+        <div style="color:var(--fg-red);">▼ ${t("pem_deaths")}: ${d.deaths.length} (${d.deaths.map(d => `${d.pid}:${d.comm}`).join(", ") || "—"})</div>
+        <div style="color:var(--fg-amber);">◆ ${t("pem_spikes")}: ${d.spikes.length}</div>
+        <div style="color:var(--fg-purple);">● ${t("pem_orphans")}: ${d.orphans.length}</div>
+        <div style="color:var(--text-muted);">sistema CPU: ${d.cpuPct.toFixed(1)}% · RAM: ${d.ramPct.toFixed(1)}% · ${t("pem_alive_short")}: ${d.alive}</div>
       `;
 
       // Table
@@ -182,8 +190,8 @@ export function renderProcessEcosystem(container: HTMLElement): void {
 
       // Tree
       treeEl.innerHTML = `
-        <div style="color:var(--fg-blue); font-weight:bold;">Raíces: ${out.final.treeRoots.join(", ") || "—"}</div>
-        <div style="color:var(--text-muted); margin-top:6px;">Hilos del kernel (ppid=2): ${out.final.kernelThreads.join(", ") || "—"}</div>
+        <div style="color:var(--fg-blue); font-weight:bold;">${t("pem_roots")}: ${out.final.treeRoots.join(", ") || "—"}</div>
+        <div style="color:var(--text-muted); margin-top:6px;">${t("pem_kernel_threads")}: ${out.final.kernelThreads.join(", ") || "—"}</div>
         <div style="color:var(--text-muted); margin-top:6px;">Núcleos: ${input.ncores} · CLK_TCK: ${input.clkTick}</div>
       `;
 
@@ -199,9 +207,9 @@ export function renderProcessEcosystem(container: HTMLElement): void {
 
   function reset() {
     model.reset();
-    diffEl.innerHTML = "<div style='color:var(--text-muted);'>Ecosistema reiniciado</div>";
+    diffEl.innerHTML = `<div style='color:var(--text-muted);'>${t("pem_reset_done")}</div>`;
     tableBody.innerHTML = "<tr><td colspan='8' style='color:var(--text-muted);'>Sin procesos</td></tr>";
-    treeEl.innerHTML = "<div style='color:var(--text-muted);'>Esperando ejecución...</div>";
+    treeEl.innerHTML = `<div style='color:var(--text-muted);' data-i18n="wtm_waiting"></div>`;
     sysCpuEl.textContent = "—";
     sysRamEl.textContent = "—";
     aliveEl.textContent = "—";

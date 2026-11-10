@@ -6,6 +6,14 @@
  */
 
 import { WifiTimeMachineModel, type WifiModelInput } from "@models/wifi-time-machine";
+import { getLang } from "../i18n";
+import { dict } from "../i18n/dict";
+
+function t(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 export function renderWifiTimeMachine(container: HTMLElement): void {
   const model = new WifiTimeMachineModel();
@@ -36,32 +44,32 @@ BSS 00:11:22:33:44:55(Onboard)
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Entrada de escaneo</div>
-              <div class="card-subtitle">Fixture sintética de iw dump o nmcli</div>
+              <div class="card-title" data-i18n="wtm_input_title"></div>
+              <div class="card-subtitle" data-i18n="wtm_input_sub"></div>
             </div>
           </div>
           <textarea id="wtm-iw-input" rows="14" style="width:100%; font-family:var(--mono); font-size:11px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); color:var(--text); padding:12px; resize:vertical;">${DEFAULT_IW}</textarea>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted);">Backend</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="wtm_label_backend"></label>
             <select id="wtm-backend" style="margin-left:8px;">
               <option value="iw">iw</option>
               <option value="nmcli">nmcli</option>
             </select>
-            <label style="margin-left:24px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sanitizar BSSIDs</label>
+            <label style="margin-left:24px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="wtm_label_sanitize"></label>
             <input type="checkbox" id="wtm-sanitize" style="margin-left:6px;">
           </div>
-          <button id="wtm-run" class="btn primary">Ejecutar modelo</button>
+          <button id="wtm-run" class="btn primary" data-i18n="wtm_run"></button>
         </div>
 
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Etapas intermedias</div>
-              <div class="card-subtitle">Cada etapa del cálculo, no solo el resultado final</div>
+              <div class="card-title" data-i18n="wtm_stages_title"></div>
+              <div class="card-subtitle" data-i18n="wtm_stages_sub"></div>
             </div>
           </div>
           <div id="wtm-stages" style="font-family:var(--mono); font-size:12px; color:var(--text-muted);">
-            <div class="stage-row"><span class="stage-chip">Esperando ejecución...</span></div>
+            <div class="stage-row"><span class="stage-chip" data-i18n="wtm_waiting"></span></div>
           </div>
         </div>
       </div>
@@ -70,8 +78,8 @@ BSS 00:11:22:33:44:55(Onboard)
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Mapa de calor de tiempo (timeline)</div>
-              <div class="card-subtitle">Filas: redes · Columnas: buckets de tiempo · Glifo: señal media · Blanco: no observado</div>
+              <div class="card-title" data-i18n="wtm_timeline_title"></div>
+              <div class="card-subtitle" data-i18n="wtm_timeline_sub"></div>
             </div>
           </div>
           <div class="canvas-container" style="height:320px;">
@@ -84,7 +92,7 @@ BSS 00:11:22:33:44:55(Onboard)
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Actividad por canal</div>
+                <div class="card-title" data-i18n="wtm_channels_title"></div>
                 <div class="card-subtitle">Conteo de observaciones y señal media por canal 802.11</div>
               </div>
             </div>
@@ -93,7 +101,7 @@ BSS 00:11:22:33:44:55(Onboard)
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Sparkline de señal</div>
+                <div class="card-title" data-i18n="wtm_sparkline_title"></div>
                 <div class="card-subtitle">Señal a lo largo del tiempo para la red más fuerte</div>
               </div>
             </div>
@@ -107,13 +115,13 @@ BSS 00:11:22:33:44:55(Onboard)
     <div class="card mt-16">
       <div class="card-header">
         <div>
-          <div class="card-title">Exportación</div>
+          <div class="card-title" data-i18n="wtm_export_title"></div>
           <div class="card-subtitle">JSON / CSV con opción de desinfección SHA-256</div>
         </div>
       </div>
       <div class="controls mt-8">
-        <button id="wtm-export-json" class="btn secondary">Exportar JSON</button>
-        <button id="wtm-export-csv" class="btn secondary">Exportar CSV</button>
+        <button id="wtm-export-json" class="btn secondary" data-i18n="wtm_export_json"></button>
+        <button id="wtm-export-csv" class="btn secondary" data-i18n="wtm_export_csv"></button>
       </div>
       <pre id="wtm-export-output" style="font-size:11px; max-height:200px; overflow:auto;">—</pre>
     </div>

@@ -7,6 +7,14 @@
  */
 
 import { BleRadarModel, type BleModelInput } from "@models/ble-radar";
+import { getLang } from "../i18n";
+import { dict } from "../i18n/dict";
+
+function t(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 export function renderBleRadar(container: HTMLElement): void {
   const model = new BleRadarModel();
@@ -17,36 +25,36 @@ export function renderBleRadar(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Configuración de entrada</div>
-              <div class="card-subtitle">Observaciones BLE o modo demo determinista</div>
+              <div class="card-title" data-i18n="ble_input_title"></div>
+              <div class="card-subtitle" data-i18n="ble_input_sub"></div>
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Modo demo (segundos sintéticos)</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="ble_label_demo_secs"></label>
             <input type="number" id="ble-demo-seconds" value="30" min="1" max="300" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Seed</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="ble_label_seed"></label>
             <input type="number" id="ble-demo-seed" value="7" style="width:70px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted);">Clock (epoch s)</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="ble_label_clock"></label>
             <input type="number" id="ble-clock" value="1000000000" style="width:120px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sweep ángulo (°)</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="ble_label_sweep"></label>
             <input type="number" id="ble-sweep" value="0" min="0" max="359" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sanitizar direcciones</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="ble_label_sanitize"></label>
             <input type="checkbox" id="ble-sanitize" style="margin-left:6px;">
           </div>
-          <button id="ble-run" class="btn primary">Ejecutar modelo</button>
+          <button id="ble-run" class="btn primary" data-i18n="ble_run"></button>
         </div>
 
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Estado del dispositivo (ciclo de vida)</div>
-              <div class="card-subtitle">Estado, RSSI, últimos vistos, trails de histórico</div>
+              <div class="card-title" data-i18n="ble_device_title"></div>
+              <div class="card-subtitle" data-i18n="ble_device_sub"></div>
             </div>
           </div>
           <div id="ble-devices" style="font-family:var(--mono); font-size:11px; color:var(--text-muted); max-height:200px; overflow-y:auto;">
-            <div style="color:var(--text-muted);">Esperando ejecución...</div>
+            <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
           </div>
         </div>
       </div>
@@ -55,8 +63,8 @@ export function renderBleRadar(container: HTMLElement): void {
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Radar (geometría determinista)</div>
-              <div class="card-subtitle">Anillos = fuerza RSSI (NO distancia) · Ángulo = hash de dirección (convención visual)</div>
+              <div class="card-title" data-i18n="ble_radar_title"></div>
+              <div class="card-subtitle" data-i18n="ble_radar_sub"></div>
             </div>
           </div>
           <div class="canvas-container" style="height:360px; display:flex; align-items:center; justify-content:center;">
@@ -69,8 +77,8 @@ export function renderBleRadar(container: HTMLElement): void {
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Resumen de ciclo de vida</div>
-                <div class="card-subtitle">Conteo de dispositivos por estado</div>
+                <div class="card-title" data-i18n="ble_lifecycle_title"></div>
+                <div class="card-subtitle" data-i18n="ble_lifecycle_sub"></div>
               </div>
             </div>
             <div id="ble-lifecycle" style="font-family:var(--mono); font-size:13px; line-height:2;"></div>
@@ -78,8 +86,8 @@ export function renderBleRadar(container: HTMLElement): void {
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Reproducción de sesión</div>
-                <div class="card-subtitle">Cursor de tiempo sobre observaciones grabadas</div>
+                <div class="card-title" data-i18n="ble_replay_title"></div>
+                <div class="card-subtitle" data-i18n="ble_replay_sub"></div>
               </div>
             </div>
             <div id="ble-replay" style="font-family:var(--mono); font-size:12px; color:var(--text-muted); height:80px; display:flex; align-items:center; justify-content:center;"></div>
@@ -91,13 +99,13 @@ export function renderBleRadar(container: HTMLElement): void {
     <div class="card mt-16">
       <div class="card-header">
         <div>
-          <div class="card-title">Exportación</div>
-          <div class="card-subtitle">JSON / CSV con desinfección de direcciones SHA-256</div>
+          <div class="card-title" data-i18n="ble_export_title"></div>
+          <div class="card-subtitle" data-i18n="ble_export_sub"></div>
         </div>
       </div>
       <div class="controls mt-8">
-        <button id="ble-export-json" class="btn secondary">Exportar JSON</button>
-        <button id="ble-export-csv" class="btn secondary">Exportar CSV</button>
+        <button id="ble-export-json" class="btn secondary" data-i18n="ble_export_json"></button>
+        <button id="ble-export-csv" class="btn secondary" data-i18n="ble_export_csv"></button>
       </div>
       <pre id="ble-export-output" style="font-size:11px; max-height:180px; overflow:auto;">—</pre>
     </div>
@@ -119,7 +127,7 @@ export function renderBleRadar(container: HTMLElement): void {
   const replayEl = container.querySelector("#ble-replay")! as HTMLElement;
   const exportJsonBtn = container.querySelector("#ble-export-json") as HTMLButtonElement;
   const exportCsvBtn = container.querySelector("#ble-export-csv") as HTMLButtonElement;
-  const exportOutput = container.querySelector("#ble-export-output")! as HTMLPreElement;
+  const exportOutput = container.querySelector("#ble-export-output")! as HTMLElement;
 
   // ------------------------------------------------------------------
   // Radar canvas rendering
@@ -141,7 +149,6 @@ export function renderBleRadar(container: HTMLElement): void {
 
     const { cells, centerX, centerY, maxRadius } = frame;
 
-    // Scale frame geometry to canvas
     const scaleX = displayW / frame.width;
     const scaleY = displayH / frame.height;
     const cx = centerX * scaleX;
@@ -167,7 +174,6 @@ export function renderBleRadar(container: HTMLElement): void {
       ctx.globalAlpha = 1.0;
     }
 
-    // Draw center crosshair highlight
     ctx.strokeStyle = "#666666";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -212,16 +218,17 @@ export function renderBleRadar(container: HTMLElement): void {
       const devHtml = out.final.devices.map(d => {
         const stateColor = d.state === "active" ? "#10b981" : d.state === "fading" ? "#f59e0b" : d.state === "disappeared" ? "#ef4444" : "#a855f7";
         const band = d.rawRssi !== null ? `RSSI ${d.rawRssi} dBm` : "—";
+        const stateLabel = t(`ble_${d.state}`);
         return `
           <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a1e;">
             <span style="color:var(--text);">${d.name || d.address}</span>
-            <span style="color:${stateColor}; font-weight:bold;">${d.state}</span>
+            <span style="color:${stateColor}; font-weight:bold;">${stateLabel}</span>
             <span style="color:var(--text-muted);">${band}</span>
-            <span style="color:var(--text-muted);">${d.timesSeen} obs</span>
+            <span style="color:var(--text-muted);">${d.timesSeen} ${t("ble_obs")}</span>
           </div>
         `;
       }).join("");
-      devicesEl.innerHTML = devHtml || "<div style='color:var(--text-muted);'>Sin dispositivos</div>";
+      devicesEl.innerHTML = devHtml || `<div style='color:var(--text-muted);' data-i18n="ble_no_devices"></div>`;
 
       // Radar frame
       renderRadarFrame(out.final.frame);
@@ -229,10 +236,10 @@ export function renderBleRadar(container: HTMLElement): void {
       // Lifecycle summary
       const ls = out.final.lifecycleSummary;
       lifecycleEl.innerHTML = `
-        <div><span style="color:#a855f7;">▪ appeared:</span> <span style="color:var(--text);">${ls.appeared}</span></div>
-        <div><span style="color:#10b981;">▪ active:</span> <span style="color:var(--text);">${ls.active}</span></div>
-        <div><span style="color:#f59e0b;">▪ fading:</span> <span style="color:var(--text);">${ls.fading}</span></div>
-        <div><span style="color:#ef4444;">▪ disappeared:</span> <span style="color:var(--text);">${ls.disappeared}</span></div>
+        <div><span style="color:#a855f7;">▪ ${t("ble_appeared")}:</span> <span style="color:var(--text);">${ls.appeared}</span></div>
+        <div><span style="color:#10b981;">▪ ${t("ble_active")}:</span> <span style="color:var(--text);">${ls.active}</span></div>
+        <div><span style="color:#f59e0b;">▪ ${t("ble_fading")}:</span> <span style="color:var(--text);">${ls.fading}</span></div>
+        <div><span style="color:#ef4444;">▪ ${t("ble_disappeared")}:</span> <span style="color:var(--text);">${ls.disappeared}</span></div>
       `;
 
       // Replay
@@ -241,11 +248,11 @@ export function renderBleRadar(container: HTMLElement): void {
         replayEl.innerHTML = `
           <div style="text-align:center;">
             <div style="color:var(--text); font-size:13px;">${r.progress.toFixed(0)}% — t=${Math.round(r.replayT)} / ${r.endT}</div>
-            <div style="color:var(--text-muted); font-size:11px;">${r.done ? "sesión completada" : "en reproducción"}</div>
+            <div style="color:var(--text-muted); font-size:11px;">${r.done ? t("ble_completed") : t("ble_playing")}</div>
           </div>
         `;
       } else {
-        replayEl.innerHTML = "<div style='color:var(--text-muted);'>Sin datos de reproducción</div>";
+        replayEl.innerHTML = `<div style='color:var(--text-muted);' data-i18n="ble_replay_none"></div>`;
       }
 
       // Export

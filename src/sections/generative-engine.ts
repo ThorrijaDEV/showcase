@@ -7,6 +7,14 @@
  */
 
 import { GenerativeEngineModel, type GenModelInput } from "@models/generative-engine";
+import { getLang } from "../i18n";
+import { dict } from "../i18n/dict";
+
+function t(key: string): string {
+  const entry = dict[key];
+  if (!entry) return key;
+  return entry[getLang()];
+}
 
 export function renderGenerativeEngine(container: HTMLElement): void {
   const model = new GenerativeEngineModel();
@@ -17,14 +25,14 @@ export function renderGenerativeEngine(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Identidad del mundo</div>
-              <div class="card-subtitle">Semilla · modo · parámetros · frame</div>
+              <div class="card-title" data-i18n="gen_world_title"></div>
+              <div class="card-subtitle" data-i18n="gen_world_sub"></div>
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Semilla (entero compartible)</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="gen_label_seed"></label>
             <input type="number" id="gen-seed" value="12345" style="width:100px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Modo</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="gen_label_mode"></label>
             <select id="gen-mode" style="margin-left:8px; width:130px; font-family:var(--mono); font-size:12px;">
               <option value="flowfield">flowfield</option>
               <option value="plasma">plasma</option>
@@ -32,7 +40,7 @@ export function renderGenerativeEngine(container: HTMLElement): void {
             </select>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Canvas (cols × rows)</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="gen_label_canvas"></label>
             <div style="display:flex; gap:8px; align-items:center;">
               <input type="number" id="gen-width" value="100" min="20" max="200" style="width:70px; font-family:var(--mono); font-size:12px;">
               <span style="font-family:var(--mono); font-size:11px; color:var(--text-muted);">×</span>
@@ -40,11 +48,11 @@ export function renderGenerativeEngine(container: HTMLElement): void {
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;">Frame</label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="gen_label_frame"></label>
             <input type="number" id="gen-frame" value="0" min="0" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Paleta</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="gen_label_palette"></label>
             <select id="gen-palette" style="margin-left:8px; width:100px; font-family:var(--mono); font-size:12px;">
-              <option value="">(desde semilla)</option>
+              <option value="" data-i18n="gen_palette_seed"></option>
               <option value="neon">neon</option>
               <option value="ocean">ocean</option>
               <option value="ember">ember</option>
@@ -55,18 +63,18 @@ export function renderGenerativeEngine(container: HTMLElement): void {
               <option value="mono">mono</option>
             </select>
           </div>
-          <button id="gen-run" class="btn primary">Renderizar frame</button>
+          <button id="gen-run" class="btn primary" data-i18n="gen_run"></button>
         </div>
 
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Etapas del cálculo</div>
-              <div class="card-subtitle">Semilla → parámetros → lienzo → render → huella</div>
+              <div class="card-title" data-i18n="gen_stages_title"></div>
+              <div class="card-subtitle" data-i18n="gen_stages_sub"></div>
             </div>
           </div>
           <div id="gen-stages" style="font-family:var(--mono); font-size:12px; color:var(--text-muted);">
-            <div class="stage-row"><span class="stage-chip">Esperando ejecución...</span></div>
+            <div class="stage-row"><span class="stage-chip" data-i18n="wtm_waiting"></span></div>
           </div>
         </div>
       </div>
@@ -75,8 +83,8 @@ export function renderGenerativeEngine(container: HTMLElement): void {
         <div class="card" style="flex:1;">
           <div class="card-header">
             <div>
-              <div class="card-title">Render (pixels deterministas)</div>
-              <div class="card-subtitle">Cada píxel es una función pura de (semilla, modo, parámetros, frame)</div>
+              <div class="card-title" data-i18n="gen_render_title"></div>
+              <div class="card-subtitle" data-i18n="gen_render_sub"></div>
             </div>
           </div>
           <div class="canvas-container" style="height:420px; display:flex; align-items:center; justify-content:center; background:#050507;">
@@ -89,8 +97,8 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Par·metros del modo</div>
-                <div class="card-subtitle">Todos derivados de la semilla</div>
+                <div class="card-title" data-i18n="gen_params_title"></div>
+                <div class="card-subtitle" data-i18n="gen_params_sub"></div>
               </div>
             </div>
             <pre id="gen-params" style="font-size:11px;">—</pre>
@@ -98,8 +106,8 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           <div class="card" style="flex:1;">
             <div class="card-header">
               <div>
-                <div class="card-title">Huella dactilar del mundo</div>
-                <div class="card-subtitle">SHA-256 sobre modo + frame + parámetros + píxeles — identificador compartible</div>
+                <div class="card-title" data-i18n="gen_fp_title"></div>
+                <div class="card-subtitle" data-i18n="gen_fp_sub"></div>
               </div>
             </div>
             <div id="gen-fp-detail" style="font-family:var(--mono); font-size:11px; color:var(--text-muted); background:#0a0a0c; padding:12px; border-radius:var(--radius); border:1px solid var(--panel-border);">—</div>
@@ -139,11 +147,6 @@ export function renderGenerativeEngine(container: HTMLElement): void {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, displayW, displayH);
 
-    // Each pixel is drawn as a small rect preserving half-block aspect
-    // (2 pixels tall per cell). We map the W×(H×2) pixel buffer to canvas.
-    const pxPerCellX = displayW / w;
-    const pxPerCellY = displayH / h;
-
     const img = ctx.createImageData(w, h * 2);
     const data = img.data;
     for (const p of pixels) {
@@ -154,8 +157,6 @@ export function renderGenerativeEngine(container: HTMLElement): void {
       data[idx + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
-    // Scale the W×(H×2) pixel buffer to fill the canvas container with crisp
-    // nearest-neighbor pixels so the artwork is visible at any canvas size.
     const tmp = document.createElement("canvas");
     tmp.width = w;
     tmp.height = h * 2;
@@ -183,7 +184,6 @@ export function renderGenerativeEngine(container: HTMLElement): void {
     try {
       const out = model.run(input);
 
-      // Stages
       const html = out.stages.map((s: { name: string; description: string; data: unknown }) => {
         let dataStr = "";
         if (s.data && typeof s.data === "object" && !Array.isArray(s.data)) {
@@ -195,14 +195,10 @@ export function renderGenerativeEngine(container: HTMLElement): void {
       }).join("");
       stagesEl.innerHTML = html;
 
-      // Canvas
       renderCanvas(out.final.pixels, out.final.width, out.final.height * 2);
 
-      // Fingerprint
       fingerprintEl.textContent = `fp=${out.final.fingerprint}`;
       fpDetailEl.textContent = `mode=${out.final.mode} frame=${out.final.frame} seed=${out.final.seed} palette=${out.final.palette} cells=${out.final.cellCount}`;
-
-      // Params
       paramsPre.textContent = JSON.stringify(out.final.params, null, 2);
 
     } catch (e) {
