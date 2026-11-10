@@ -2,10 +2,11 @@ import { defineConfig } from "vite";
 import path from "path";
 
 export default defineConfig({
+  base: "/showcase/",
   root: ".",
   publicDir: "assets",
   build: {
-    outDir: "dist",
+    outDir: "docs",
     emptyOutDir: true,
   },
   server: {
