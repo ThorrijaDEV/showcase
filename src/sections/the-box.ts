@@ -167,6 +167,63 @@ export function renderTheBox(container: HTMLElement): void {
     <div class="card mt-16" style="border-left:3px solid var(--accent);">
       <div class="card-header">
         <div>
+          <div class="card-title" data-i18n="box_research_title"></div>
+          <div class="card-subtitle" data-i18n="box_research_section_sub"></div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); color:var(--text); line-height:1.6;">
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px; font-weight:600; color:var(--fg-amber); margin-bottom:4px;">${t("box_research_demo_note")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_identity_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${t("box_research_identity_body")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_problem_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${t("box_research_problem_body")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_components_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;"><strong>${t("box_research_component_substrate").split(" — ")[0]}:</strong> ${t("box_research_component_substrate")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_component_rules").split(" — ")[0]}:</strong> ${t("box_research_component_rules")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_component_metrics").split(" — ")[0]}:</strong> ${t("box_research_component_metrics")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_component_observables").split(" — ")[0]}:</strong> ${t("box_research_component_observables")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_component_identity").split(" — ")[0]}:</strong> ${t("box_research_component_identity")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_examples_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_example_descend_fuse").split(" — ")[0]}:</strong> ${t("box_research_example_descend_fuse")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_example_lineage_cycles").split(" — ")[0]}:</strong> ${t("box_research_example_lineage_cycles")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_example_invariants").split(" — ")[0]}:</strong> ${t("box_research_example_invariants")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>${t("box_research_example_rule_interactions").split(" — ")[0]}:</strong> ${t("box_research_example_rule_interactions")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_demo_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${t("box_research_demo_body")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_maturity_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:2px;"><strong>Implemented:</strong> ${t("box_research_maturity_implemented")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>Verified:</strong> ${t("box_research_maturity_verified")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>Preliminary:</strong> ${t("box_research_maturity_preliminary")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>Possible:</strong> ${t("box_research_maturity_possible")}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:6px;"><strong>Aspirational:</strong> ${t("box_research_maturity_aspirational")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_integrity_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${t("box_research_integrity_body")}</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${t("box_research_vision_title")}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${t("box_research_vision_body")}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
           <div class="card-title" data-i18n="box_level_view_title"></div>
           <div class="card-subtitle" data-i18n="box_level_view_sub"></div>
         </div>
