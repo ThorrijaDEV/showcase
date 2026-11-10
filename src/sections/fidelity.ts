@@ -23,7 +23,7 @@ export function renderFidelity(container: HTMLElement): void {
               <ul>
                 <li>Parsing de bloques BSS de iw dump</li>
                 <li>Tokenizador escapado de nmcli</li>
-                <li>Deduplicación por BSSID (se~nal más fuerte)</li>
+                <li>Deduplicación por BSSID (señal más fuerte)</li>
                 <li>Mapeo freq→canal 2.4/5/6 GHz</li>
                 <li>Inferencia de seguridad por AKM</li>
                 <li>Mapa de calor tiempo × buckets</li>
@@ -35,11 +35,11 @@ export function renderFidelity(container: HTMLElement): void {
               <h4>BLE Radar</h4>
               <div class="level">4</div>
               <ul>
-                <li>M&aacutequina de estado: appeared→active→fading→disappeared</li>
+                <li>Máquina de estado: appeared→active→fading→disappeared</li>
                 <li>EMA RSSI (alpha=0.4)</li>
                 <li>Bandas de fuerza (NO distancia)</li>
                 <li>Ángulo desde SHA-256(dir) — convención visual</li>
-                <li>Geometría del frame radar (cárdenas)</li>
+                <li>Geometría del frame radar (celdas radar)</li>
                 <li>Cursor de reproducción con seek/speed</li>
                 <li><strong>Adaptado:</strong> sin bleak/BlueZ, sin curses, sin SQLite</li>
               </ul>
@@ -63,7 +63,7 @@ export function renderFidelity(container: HTMLElement): void {
               <ul>
                 <li>RNG splitmix64 sin estado (O(1) buscar frames)</li>
                 <li>Paletas continuas 1-D interpoladas</li>
-                <li>Flowfield: campo de sénos análitico</li>
+                <li>Flowfield: campo de senos analítico</li>
                 <li>Plasma: fórmulas de color cerradas</li>
                 <li>Attractor: Clifford/Dejong con sondeo de coeficientes</li>
                 <li>Huella dactilar del mundo (hash de píxeles)</li>
@@ -91,7 +91,7 @@ export function renderFidelity(container: HTMLElement): void {
         <div class="card mt-16">
           <h3 style="font-size:16px; margin-bottom:12px; color:var(--text);">Suposiciones documentadas</h3>
           <ul style="color:var(--text-muted); font-size:13px; font-family:var(--mono); line-height:1.8; padding-left:18px;">
-            <li><strong>RSSI ≠ distancia:</strong> los anillos del radar son bandas de fuerza se~nal, nunca metros físicos.</li>
+            <li><strong>RSSI ≠ distancia:</strong> los anillos del radar son bandas de fuerza señal, nunca metros físicos.</li>
             <li><strong>Ángulo ≠ orientación:</strong> el ángulo de dispositivo se deriva del hash de la dirección MAC; BLE no proporciona orientación.</li>
             <li><strong>Sin hardware:</strong> los modelos no acceden a adaptadores Bluetooth, Wi-Fi ni /proc. Las entradas son sintéticas o de muestra.</li>
             <li><strong>Sin I/O original:</strong> no se invocan iw, nmcli, bleak ni curses. Límites de E/S sustituidos por entradas deterministas.</li>
@@ -112,7 +112,7 @@ export function renderFidelity(container: HTMLElement): void {
           <ul style="color:var(--text-muted); font-size:13px; font-family:var(--mono); line-height:1.8; padding-left:18px;">
             <li><strong>Hardware de radio:</strong> WTM y BLE requieren adaptadores Wi-Fi/BLE reales para escaneo en vivo; sustituidos por datos sintéticos.</li>
             <li><strong>Base de datos SQLite:</strong> la persistencia se sustituyó por almacén en memoria con la misma semántica de consultas.</li>
-            <li><strong>Interfaz de terminal:</strong> curses/pantalla sustituidos por lienzo HTML y geometría de cárdenas.</li>
+            <li>Interfaz de terminal: curses/pantalla sustituidos por lienzo HTML y geometría de celdas radar.</li>
             <li><strong>/proc de Linux:</strong> el modelo PEM usa instantáneas sintéticas; no lee /proc del sistema anfitrión.</li>
             <li><strong>Exportación de archivo:</strong> GIF/PNG/ANS del GenArt no están en el nivel de modelo; los arrays de píxeles se exportan como datos.</li>
             <li><strong>No se afirman capacidades:</strong> nada se afirma que no esté implementado y probado.</li>

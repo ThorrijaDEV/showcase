@@ -232,7 +232,7 @@ BSS 00:11:22:33:44:55(Onboard)
     for (let c = 0; c < nCols; c++) {
       if (c % 5 === 0 || c === nCols - 1) {
         const t = tl.startEpoch + c * tl.bucketSeconds;
-        const h = new Date(t * 1000).toISOString().substr(11, 5);
+        const h = new Date(t * 1000).toISOString().slice(11, 16);
         const x = padLeft + (c + 0.5) * cellW;
         ctx.fillText(h, x, padTop - 6);
       }
@@ -287,6 +287,9 @@ BSS 00:11:22:33:44:55(Onboard)
       // Stages
       renderStages(out.stages);
 
+      // Remember last output so a window resize can redraw the heatmap
+      outState.lastOutput = out;
+
       // Timeline
       const tc = timelineCanvas;
       tc.width = tc.clientWidth * (window.devicePixelRatio || 1);
@@ -299,8 +302,6 @@ BSS 00:11:22:33:44:55(Onboard)
 
       // Sparkline
       if (out.final.sparkline) {
-        const netObs = out.final.observations.filter(o => o.bssid === out.final.networks[0]?.bssid && o.signal !== null)
-          .sort((a, b) => a.observedAt - b.observedAt).map(o => o.signal!);
         renderSparkline(out.final.sparkline, out.final.networks[0]?.ssid ?? out.final.networks[0]?.bssid ?? "unknown");
       } else {
         renderSparkline(null, "");
@@ -321,11 +322,12 @@ BSS 00:11:22:33:44:55(Onboard)
 
   runBtn.addEventListener("click", run);
 
+  let outState = { lastOutput: null as any };
+
   // Auto-resize canvas on window resize
   window.addEventListener("resize", () => {
     if (outState.lastOutput) renderTimeline(outState.lastOutput.final.timeline, timelineCanvas);
   });
 
-  let outState = { lastOutput: null as any };
   run();
 }

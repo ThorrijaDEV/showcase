@@ -18,7 +18,7 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           <div class="card-header">
             <div>
               <div class="card-title">Identidad del mundo</div>
-              <div class="card-subtitle">Semilla · modo · par·metros · frame</div>
+              <div class="card-subtitle">Semilla · modo · parámetros · frame</div>
             </div>
           </div>
           <div class="controls mt-8">
@@ -62,7 +62,7 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           <div class="card-header">
             <div>
               <div class="card-title">Etapas del cálculo</div>
-              <div class="card-subtitle">Semilla → par·metros → lienzo → render → huella</div>
+              <div class="card-subtitle">Semilla → parámetros → lienzo → render → huella</div>
             </div>
           </div>
           <div id="gen-stages" style="font-family:var(--mono); font-size:12px; color:var(--text-muted);">
@@ -76,7 +76,7 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           <div class="card-header">
             <div>
               <div class="card-title">Render (pixels deterministas)</div>
-              <div class="card-subtitle">Cada píxel es una función pura de (semilla, modo, par·metros, frame)</div>
+              <div class="card-subtitle">Cada píxel es una función pura de (semilla, modo, parámetros, frame)</div>
             </div>
           </div>
           <div class="canvas-container" style="height:420px; display:flex; align-items:center; justify-content:center; background:#050507;">
@@ -99,7 +99,7 @@ export function renderGenerativeEngine(container: HTMLElement): void {
             <div class="card-header">
               <div>
                 <div class="card-title">Huella dactilar del mundo</div>
-                <div class="card-subtitle">SHA-256 sobre modo + frame + par·metros + píxeles — identificador compartible</div>
+                <div class="card-subtitle">SHA-256 sobre modo + frame + parámetros + píxeles — identificador compartible</div>
               </div>
             </div>
             <div id="gen-fp-detail" style="font-family:var(--mono); font-size:11px; color:var(--text-muted); background:#0a0a0c; padding:12px; border-radius:var(--radius); border:1px solid var(--panel-border);">—</div>
@@ -154,6 +154,16 @@ export function renderGenerativeEngine(container: HTMLElement): void {
       data[idx + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
+    // Scale the W×(H×2) pixel buffer to fill the canvas container with crisp
+    // nearest-neighbor pixels so the artwork is visible at any canvas size.
+    const tmp = document.createElement("canvas");
+    tmp.width = w;
+    tmp.height = h * 2;
+    tmp.getContext("2d")!.putImageData(img, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, displayW, displayH);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(tmp, 0, 0, w, h * 2, 0, 0, displayW, displayH);
   }
 
   // ------------------------------------------------------------------

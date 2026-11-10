@@ -9,8 +9,7 @@
  */
 
 import { TheBoxModel, type BoxInput } from "@models/the-box";
-import { foundryRuleSet, State, Engine, PossibilitySpace, TAG_DESCEND, TAG_BOND,
-  TAG_PULL, TAG_EQUIV, TAG_QUIET } from "@models/the-box";
+import { foundryRuleSet, State, Engine } from "@models/the-box";
 
 export function renderTheBox(container: HTMLElement): void {
   const model = new TheBoxModel();
@@ -355,21 +354,23 @@ export function renderTheBox(container: HTMLElement): void {
     try {
       const out = model.run(input);
       currentInput = input;
-      currentState = out.final as any; // We need the State, but BoxOutput doesn't expose it directly
-      // Re-run to get stages for visualization
+      currentState = out.final as any;
       const stages = out.stages;
       const lastStage = stages[stages.length - 1];
       currentStep = stages.length - 1;
 
-      // We need the State for canvas rendering. Rebuild engine to get it.
+      // Rebuild the stepping engine from the same deterministic inputs so
+      // single-step controls (Paso 1 / Paso 10 / Ejecutar todo) continue
+      // from the exact state the full run produced.
       const ruleset = foundryRuleSet();
       const state = State.random(input.nNodes, input.nArcs, input.dim, input.seed,
         input.tagSpread, { maxNodes: input.maxNodes, maxArcs: input.maxArcs });
       const eng = new Engine(state, ruleset, input.seed, input.policy, true, 1);
       eng.run(input.steps);
-      currentState = eng.state;
       currentEngine = eng;
+      currentState = eng.state;
 
+      if (!currentState) throw new Error("Box state not initialized");
       renderCanvas(currentState);
       renderGraphHash(currentState);
       renderObservables(lastStage.observables);
@@ -420,7 +421,7 @@ export function renderTheBox(container: HTMLElement): void {
     currentState = null;
     currentEngine = null;
     currentStep = 0;
-    canvasEl.getContext("2d")!.clearRect(0, 0, 400, 300);
+    canvasEl.getContext("2d")!.clearRect(0, 0, canvasEl.width, canvasEl.height);
     currentEventEl.innerHTML = "<div style='color:var(--text-muted);'>Resetado</div>";
     graphHashEl.textContent = "—";
     observablesEl.innerHTML = "<div style='color:var(--text-muted);'>Esperando ejecución...</div>";

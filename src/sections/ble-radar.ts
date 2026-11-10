@@ -30,7 +30,7 @@ export function renderBleRadar(container: HTMLElement): void {
           <div class="controls mt-8">
             <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted);">Clock (epoch s)</label>
             <input type="number" id="ble-clock" value="1000000000" style="width:120px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sweep ángel (°)</label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sweep ángulo (°)</label>
             <input type="number" id="ble-sweep" value="0" min="0" max="359" style="width:80px; font-family:var(--mono); font-size:12px;">
             <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">Sanitizar direcciones</label>
             <input type="checkbox" id="ble-sanitize" style="margin-left:6px;">
@@ -42,7 +42,7 @@ export function renderBleRadar(container: HTMLElement): void {
           <div class="card-header">
             <div>
               <div class="card-title">Estado del dispositivo (ciclo de vida)</div>
-              <div class="card-subtitle">Estado, RSSI, ·ltimos vistos, trails de histórico</div>
+              <div class="card-subtitle">Estado, RSSI, últimos vistos, trails de histórico</div>
             </div>
           </div>
           <div id="ble-devices" style="font-family:var(--mono); font-size:11px; color:var(--text-muted); max-height:200px; overflow-y:auto;">

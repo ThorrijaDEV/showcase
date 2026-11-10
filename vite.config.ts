@@ -1,5 +1,8 @@
 import { defineConfig } from "vite";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   base: "/showcase/",
@@ -15,7 +18,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@models": path.resolve(process.cwd(), "../models"),
+      "@models": path.resolve(__dirname, "../models"),
     },
   },
 });

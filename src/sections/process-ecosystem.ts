@@ -74,7 +74,7 @@ export function renderProcessEcosystem(container: HTMLElement): void {
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">&Aacute;rbol de procesos</div>
+              <div class="card-title">Árbol de procesos</div>
               <div class="card-subtitle">Raíces, hilos del kernel, memoria RAM del sistema</div>
             </div>
           </div>
@@ -88,7 +88,7 @@ export function renderProcessEcosystem(container: HTMLElement): void {
     <div class="card mt-16">
       <div class="card-header">
         <div>
-          <div class="card-title">M&eacutetricas del sistema</div>
+          <div class="card-title">Métricas del sistema</div>
           <div class="card-subtitle">CPU %, RAM %, carga, historial de ticks</div>
         </div>
       </div>
@@ -135,7 +135,7 @@ export function renderProcessEcosystem(container: HTMLElement): void {
     try {
       snaps = JSON.parse(snapInput.value);
     } catch {
-      diffEl.innerHTML = `<div style="color:var(--fg-red);">JSON inváldo</div>`;
+      diffEl.innerHTML = `<div style="color:var(--fg-red);">JSON inválido</div>`;
       return;
     }
 
