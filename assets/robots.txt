@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thorrijadev.github.io/showcase/sitemap.xml
