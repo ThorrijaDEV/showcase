@@ -8,8 +8,9 @@
  * => same trajectory.
  */
 
-import { TheBoxModel, type BoxInput } from "@models/the-box";
+import { TheBoxModel, type BoxInput, type BoxOutput } from "@models/the-box";
 import { foundryRuleSet, State, Engine } from "@models/the-box";
+import { interpret, buildExport, exportJson, type Level } from "./the-box-levels";
 import { getLang } from "../i18n";
 import { dict } from "../i18n/dict";
 
@@ -66,6 +67,14 @@ export function renderTheBox(container: HTMLElement): void {
           <div class="controls mt-8">
             <button id="box-run" class="btn primary" data-i18n="box_run"></button>
             <button id="box-reset" class="btn secondary" data-i18n="box_reset"></button>
+          </div>
+          <div class="controls mt-8">
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_level_select"></label>
+            <div class="level-segment" role="radiogroup" aria-label="Presentation level">
+              <button id="box-level-simple" class="level-btn active" data-level="simple" aria-pressed="true" data-i18n="box_level_simple"></button>
+              <button id="box-level-technical" class="level-btn" data-level="technical" aria-pressed="false" data-i18n="box_level_technical"></button>
+              <button id="box-level-raw" class="level-btn" data-level="raw" aria-pressed="false" data-i18n="box_level_raw"></button>
+            </div>
           </div>
         </div>
 
@@ -155,6 +164,23 @@ export function renderTheBox(container: HTMLElement): void {
       </div>
     </div>
 
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
+          <div class="card-title" data-i18n="box_level_view_title"></div>
+          <div class="card-subtitle" data-i18n="box_level_view_sub"></div>
+        </div>
+      </div>
+      <div id="box-level-view" style="font-family:var(--mono); color:var(--text); line-height:1.6; min-height:260px;">
+        <div style="color:var(--text-muted);" data-i18n="wtm_waiting"></div>
+      </div>
+      <div class="controls mt-8" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="box-export-simple" class="btn secondary" data-i18n="box_simple_export"></button>
+        <button id="box-export-technical" class="btn secondary" data-i18n="box_tech_export"></button>
+        <button id="box-export-raw" class="btn secondary" data-i18n="box_raw_export"></button>
+      </div>
+    </div>
+
     <section class="page-doc" id="understanding-box">
       <h2 data-i18n="doc_box_title"></h2>
       <h3 data-i18n="doc_box_a_title"></h3>
@@ -194,13 +220,22 @@ export function renderTheBox(container: HTMLElement): void {
   const canvasLegendEl = container.querySelector("#box-canvas-legend")! as HTMLElement;
   const observablesEl = container.querySelector("#box-observables")! as HTMLElement;
   const identityEl = container.querySelector("#box-identity")! as HTMLElement;
+  const levelViewEl = container.querySelector("#box-level-view")! as HTMLElement;
+  const levelSimpleBtn = container.querySelector("#box-level-simple") as HTMLButtonElement;
+  const levelTechnicalBtn = container.querySelector("#box-level-technical") as HTMLButtonElement;
+  const levelRawBtn = container.querySelector("#box-level-raw") as HTMLButtonElement;
+  const exportSimpleBtn = container.querySelector("#box-export-simple") as HTMLButtonElement;
+  const exportTechnicalBtn = container.querySelector("#box-export-technical") as HTMLButtonElement;
+  const exportRawBtn = container.querySelector("#box-export-raw") as HTMLButtonElement;
 
   // ------------------------------------------------------------------
   // State
   // ------------------------------------------------------------------
   let currentInput: BoxInput | null = null;
   let currentState: State | null = null;
+  let currentOutput: BoxOutput | null = null;
   let currentEngine: Engine | null = null;
+  let currentLevel: Level = "simple";
   let currentStep = 0;
   let animationId: number | null = null;
   let isRunning = false;
@@ -338,6 +373,80 @@ export function renderTheBox(container: HTMLElement): void {
     `;
   }
 
+  function setLevel(level: Level): void {
+    currentLevel = level;
+    [levelSimpleBtn, levelTechnicalBtn, levelRawBtn].forEach((b) => {
+      const active = b.dataset.level === level;
+      b.classList.toggle("active", active);
+      b.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    renderLevelView();
+  }
+
+  function renderLevelView(): void {
+    if (!currentOutput) {
+      levelViewEl.innerHTML = `<div style="color:var(--text-muted);">${t("wtm_waiting")}</div>`;
+      return;
+    }
+    const { simple, technical, raw } = interpret(currentOutput);
+    const view: any = currentLevel === "simple" ? simple : currentLevel === "technical" ? technical : raw;
+
+    let html = "";
+    if (currentLevel === "simple") {
+      const s = view as any;
+      html = `
+        <h3 style="font-size:15px; margin:0 0 10px 0; color:var(--fg-cyan); text-transform:uppercase; letter-spacing:0.05em;">${s.title}</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">${s.subtitle}</p>
+        ${s.sections.map((sec: any) => `
+          <div style="margin-bottom:12px;">
+            <div style="font-size:12.5px; font-weight:600; color:var(--text); margin-bottom:4px;">${sec.heading}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${sec.body}</div>
+          </div>
+        `).join("")}
+        <div style="margin-top:14px; border-top:1px solid var(--panel-border); padding-top:10px;">
+          <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">${t("box_tech_metrics")}</div>
+          ${s.keyNumbers.map((kn: any) => `
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text); margin-bottom:2px;">
+              <span style="color:var(--text-muted);">${kn.label}:</span> <span>${kn.value}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    } else if (currentLevel === "technical") {
+      const tech = view as any;
+      html = `
+        <h3 style="font-size:15px; margin:0 0 10px 0; color:var(--fg-cyan); text-transform:uppercase; letter-spacing:0.05em;">${tech.title}</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">${tech.processingSummary}</p>
+        <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">${t("box_tech_metrics")}</div>
+        <table style="font-size:11px; width:100%; border-collapse:collapse; margin-bottom:12px;">
+          ${tech.keyMetrics.map((m: any) => `
+            <tr style="border-bottom:1px solid var(--panel-border);">
+              <td style="padding:4px 0; color:var(--text-muted);">${m.name}</td>
+              <td style="padding:4px 0; color:var(--text); text-align:right;">${typeof m.value === "number" ? m.value.toFixed(4) : m.value}</td>
+            </tr>
+          `).join("")}
+        </table>
+        <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">${t("box_tech_rules_applied")}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+          ${tech.rulesApplied.map((r: any) => `<span style="display:inline-block; margin:2px 6px 2px 0; padding:2px 6px; background:#1a1a1e; border:1px solid var(--panel-border); border-radius:var(--radius);">${r.rule}: ${r.count}</span>`).join("")}
+        </div>
+        <div style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">${t("box_tech_operations")}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+          ${tech.operations.map((o: any) => `<span style="display:inline-block; margin:2px 6px 2px 0; padding:2px 6px; background:#1a1a1e; border:1px solid var(--panel-border); border-radius:var(--radius);">${o.op}: ${o.count}</span>`).join("")}
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px; line-height:1.5;">
+          <strong style="color:var(--text);">${t("box_tech_fusions")}:</strong> ${tech.fusions.count} class${tech.fusions.count !== 1 ? "es" : ""}, ${tech.fusions.nodes} node${tech.fusions.nodes !== 1 ? "s" : ""} fused (${tech.fusions.fraction}). ${tech.halt ? `Engine halted at step ${tech.halt.step}: ${tech.halt.reason}.` : "Engine completed all steps."}
+        </div>
+      `;
+    } else {
+      html = `
+        <h3 style="font-size:15px; margin:0 0 10px 0; color:var(--fg-cyan); text-transform:uppercase; letter-spacing:0.05em;">${raw.title}</h3>
+        <pre style="font-size:10px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); padding:12px; overflow:auto; color:var(--text-muted); max-height:420px;">${JSON.stringify(raw, null, 2)}</pre>
+      `;
+    }
+    levelViewEl.innerHTML = html;
+  }
+
   function renderEvent(ev: { ruleId: string; anchor: number; edits: any[]; siteKey: string } | null): void {
     if (!ev) {
       currentEventEl.innerHTML = `<div style='color:var(--text-muted);'>${t("box_no_event_yet")}</div>`;
@@ -389,6 +498,8 @@ export function renderTheBox(container: HTMLElement): void {
       renderEvent(null);
 
       currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${t("box_run_all_label")} · ${t("box_last_rule")}: ${lastStage.ruleId ?? "—"}</div>`;
+      currentOutput = out;
+      renderLevelView();
 
     } catch (e) {
       observablesEl.innerHTML = `<div style="color:var(--fg-red);">Error: ${(e as Error).message}</div>`;
@@ -438,7 +549,31 @@ export function renderTheBox(container: HTMLElement): void {
     graphHashEl.textContent = "—";
     observablesEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
     identityEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
+    currentOutput = null;
+    renderLevelView();
   });
+
+  levelSimpleBtn.addEventListener("click", () => setLevel("simple"));
+  levelTechnicalBtn.addEventListener("click", () => setLevel("technical"));
+  levelRawBtn.addEventListener("click", () => setLevel("raw"));
+
+  exportSimpleBtn.addEventListener("click", () => {
+    if (!currentOutput) return;
+    const { simple } = interpret(currentOutput);
+    exportJson(buildExport(currentOutput, "simple", simple));
+  });
+  exportTechnicalBtn.addEventListener("click", () => {
+    if (!currentOutput) return;
+    const { technical } = interpret(currentOutput);
+    exportJson(buildExport(currentOutput, "technical", technical));
+  });
+  exportRawBtn.addEventListener("click", () => {
+    if (!currentOutput) return;
+    const { raw } = interpret(currentOutput);
+    exportJson(buildExport(currentOutput, "raw", raw));
+  });
+
+  document.addEventListener("showcase:lang", () => renderLevelView());
 
   step1Btn.addEventListener("click", () => stepRender());
 
