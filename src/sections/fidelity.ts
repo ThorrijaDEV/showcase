@@ -153,6 +153,19 @@ export function renderFidelity(container: HTMLElement): void {
           <p style="color:var(--text-muted); font-size:13px; font-family:var(--mono); line-height:1.8;" data-i18n="fidelity_repro_body"></p>
         </div>
       </div>
-    </div>
+
+    <section class="page-doc" id="understanding-fidelity">
+      <h2 data-i18n="doc_fidelity_title"></h2>
+      <h3 data-i18n="doc_fidelity_a_title"></h3>
+      <p data-i18n="doc_fidelity_a_body"></p>
+      <h3 data-i18n="doc_fidelity_b_title"></h3>
+      <p data-i18n="doc_fidelity_b_body"></p>
+      <h3 data-i18n="doc_fidelity_c_title"></h3>
+      <p data-i18n="doc_fidelity_c_body"></p>
+      <h3 data-i18n="doc_fidelity_d_title"></h3>
+      <p data-i18n="doc_fidelity_d_body"></p>
+      <h3 data-i18n="doc_fidelity_e_title"></h3>
+      <p data-i18n="doc_fidelity_e_body"></p>
+    </section>
   `;
 }

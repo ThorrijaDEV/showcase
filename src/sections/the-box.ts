@@ -80,7 +80,7 @@ export function renderTheBox(container: HTMLElement): void {
             <button id="box-step1" class="btn secondary" data-i18n="box_step1"></button>
             <button id="box-step10" class="btn secondary" data-i18n="box_step10"></button>
             <button id="box-runall" class="btn primary" data-i18n="box_runall"></button>
-            <button id="box-pause" class="btn secondary" disabled data-i18n="box_pause"></button>
+            <button id="box-pause" class="btn secondary" disabled aria-disabled="true" data-i18n="box_pause"></button>
           </div>
           <div class="controls mt-8">
             <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;" data-i18n="box_event_title"></label>
@@ -154,6 +154,20 @@ export function renderTheBox(container: HTMLElement): void {
         <div data-i18n="box_fuse"></div>
       </div>
     </div>
+
+    <section class="page-doc" id="understanding-box">
+      <h2 data-i18n="doc_box_title"></h2>
+      <h3 data-i18n="doc_box_a_title"></h3>
+      <p data-i18n="doc_box_a_body"></p>
+      <h3 data-i18n="doc_box_b_title"></h3>
+      <p data-i18n="doc_box_b_body"></p>
+      <h3 data-i18n="doc_box_c_title"></h3>
+      <p data-i18n="doc_box_c_body"></p>
+      <h3 data-i18n="doc_box_d_title"></h3>
+      <p data-i18n="doc_box_d_body"></p>
+      <h3 data-i18n="doc_box_e_title"></h3>
+      <p data-i18n="doc_box_e_body"></p>
+    </section>
   `;
 
   // ------------------------------------------------------------------
@@ -314,19 +328,19 @@ export function renderTheBox(container: HTMLElement): void {
 
   function renderIdentity(summary: any): void {
     identityEl.innerHTML = `
-      <div><span style="color:var(--text-muted);">Profundidad máxima:</span> <span style="color:var(--text);">${summary.maxDepth}</span></div>
-      <div><span style="color:var(--text-muted);">Profundidad media:</span> <span style="color:var(--text);">${summary.meanDepth.toFixed(2)}</span></div>
-      <div><span style="color:var(--text-muted);">Clases de fusión:</span> <span style="color:var(--text);">${summary.nFusionClasses}</span></div>
-      <div><span style="color:var(--text-muted);">Nodos fusionados:</span> <span style="color:var(--text);">${summary.fusedNodes}</span></div>
-      <div><span style="color:var(--text-muted);">Fracción fusionada:</span> <span style="color:var(--text);">${(summary.fusedFraction * 100).toFixed(1)}%</span></div>
-      <div><span style="color:var(--text-muted);">Arcos EQUIV:</span> <span style="color:var(--text);">${summary.equivArcs}</span></div>
-      <div><span style="color:var(--text-muted);">IDs retirados:</span> <span style="color:var(--text);">${summary.retiredIds}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_max_depth")}:</span> <span style="color:var(--text);">${summary.maxDepth}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_mean_depth")}:</span> <span style="color:var(--text);">${summary.meanDepth.toFixed(2)}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_fusion_classes")}:</span> <span style="color:var(--text);">${summary.nFusionClasses}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_fused_nodes")}:</span> <span style="color:var(--text);">${summary.fusedNodes}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_fused_fraction")}:</span> <span style="color:var(--text);">${(summary.fusedFraction * 100).toFixed(1)}%</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_equiv_arcs")}:</span> <span style="color:var(--text);">${summary.equivArcs}</span></div>
+      <div><span style="color:var(--text-muted);">${t("box_identity_retired_ids")}:</span> <span style="color:var(--text);">${summary.retiredIds}</span></div>
     `;
   }
 
   function renderEvent(ev: { ruleId: string; anchor: number; edits: any[]; siteKey: string } | null): void {
     if (!ev) {
-      currentEventEl.innerHTML = "<div style='color:var(--text-muted);'>Ningún evento aún</div>";
+      currentEventEl.innerHTML = `<div style='color:var(--text-muted);'>${t("box_no_event_yet")}</div>`;
       return;
     }
     const ruleColors: Record<string, string> = {
@@ -374,7 +388,7 @@ export function renderTheBox(container: HTMLElement): void {
       renderIdentity(out.final.identity);
       renderEvent(null);
 
-      currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${stages.length - 1} pasos ejecutados · Última regla: ${lastStage.ruleId ?? "—"}</div>`;
+      currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${t("box_run_all_label")} · ${t("box_last_rule")}: ${lastStage.ruleId ?? "—"}</div>`;
 
     } catch (e) {
       observablesEl.innerHTML = `<div style="color:var(--fg-red);">Error: ${(e as Error).message}</div>`;
@@ -390,11 +404,11 @@ export function renderTheBox(container: HTMLElement): void {
       renderGraphHash(currentEngine.state);
       renderObservables({});
       renderEvent(ev);
-      currentEventEl.innerHTML = `<div style="color:var(--text);">Paso ${currentStep}: ${ev.ruleId}</div>` + currentEventEl.innerHTML;
+      currentEventEl.innerHTML = `<div style="color:var(--text);">${t("box_step_word")} ${currentStep}: ${ev.ruleId}</div>` + currentEventEl.innerHTML;
     } else {
       pauseBtn.disabled = true;
       runAllBtn.disabled = false;
-      currentEventEl.innerHTML = `<div style="color:var(--text-muted);">Motor detenido: ${currentEngine.halt?.reason ?? "desconocido"}</div>` + currentEventEl.innerHTML;
+      currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${t("box_halted_word")}: ${currentEngine.halt?.reason ?? t("unknown")}</div>` + currentEventEl.innerHTML;
     }
   }
 
@@ -405,7 +419,7 @@ export function renderTheBox(container: HTMLElement): void {
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     isRunning = false;
     pauseBtn.disabled = true;
-    pauseBtn.textContent = "Pausar";
+    pauseBtn.textContent = t("btn_pause");
     runAllBtn.disabled = false;
     fullRender(getInput());
   });
@@ -414,16 +428,16 @@ export function renderTheBox(container: HTMLElement): void {
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     isRunning = false;
     pauseBtn.disabled = true;
-    pauseBtn.textContent = "Pausar";
+    pauseBtn.textContent = t("btn_pause");
     runAllBtn.disabled = false;
     currentState = null;
     currentEngine = null;
     currentStep = 0;
     canvasEl.getContext("2d")!.clearRect(0, 0, canvasEl.width, canvasEl.height);
-    currentEventEl.innerHTML = "<div style='color:var(--text-muted);'>Resetado</div>";
+    currentEventEl.innerHTML = `<div style='color:var(--text-muted);'>${t("btn_reset_done")}</div>`;
     graphHashEl.textContent = "—";
-    observablesEl.innerHTML = "<div style='color:var(--text-muted);' data-i18n=\"wtm_waiting\"></div>";
-    identityEl.innerHTML = "<div style='color:var(--text-muted);' data-i18n=\"wtm_waiting\"></div>";
+    observablesEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
+    identityEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
   });
 
   step1Btn.addEventListener("click", () => stepRender());
@@ -438,7 +452,7 @@ export function renderTheBox(container: HTMLElement): void {
     renderCanvas(currentEngine.state);
     renderGraphHash(currentEngine.state);
     renderEvent(null);
-    currentEventEl.innerHTML = `<div style="color:var(--text);">Ejecutados 10 pasos (total ${currentStep})</div>` + currentEventEl.innerHTML;
+    currentEventEl.innerHTML = `<div style="color:var(--text);">${t("box_run_all_label")} (total ${currentStep})</div>` + currentEventEl.innerHTML;
   });
 
   runAllBtn.addEventListener("click", () => {
@@ -464,7 +478,7 @@ export function renderTheBox(container: HTMLElement): void {
         runAllBtn.disabled = false;
         step1Btn.disabled = false;
         step10Btn.disabled = false;
-        currentEventEl.innerHTML = `<div style="color:var(--text-muted);">Motor detenido: ${currentEngine!.halt?.reason ?? "desconocido"}</div>` + currentEventEl.innerHTML;
+        currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${t("box_halted_word")}: ${currentEngine!.halt?.reason ?? t("unknown")}</div>` + currentEventEl.innerHTML;
       }
     }
     animationId = requestAnimationFrame(tick);

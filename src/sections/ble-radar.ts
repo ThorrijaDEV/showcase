@@ -109,6 +109,20 @@ export function renderBleRadar(container: HTMLElement): void {
       </div>
       <pre id="ble-export-output" style="font-size:11px; max-height:180px; overflow:auto;">—</pre>
     </div>
+
+    <section class="page-doc" id="understanding-ble">
+      <h2 data-i18n="doc_ble_title"></h2>
+      <h3 data-i18n="doc_ble_a_title"></h3>
+      <p data-i18n="doc_ble_a_body"></p>
+      <h3 data-i18n="doc_ble_b_title"></h3>
+      <p data-i18n="doc_ble_b_body"></p>
+      <h3 data-i18n="doc_ble_c_title"></h3>
+      <p data-i18n="doc_ble_c_body"></p>
+      <h3 data-i18n="doc_ble_d_title"></h3>
+      <p data-i18n="doc_ble_d_body"></p>
+      <h3 data-i18n="doc_ble_e_title"></h3>
+      <p data-i18n="doc_ble_e_body"></p>
+    </section>
   `;
 
   // ------------------------------------------------------------------

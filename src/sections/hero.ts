@@ -120,6 +120,19 @@ export function renderHero(container: HTMLElement): void {
           <p style="color:var(--text-muted); font-size:12px; line-height:1.6;" data-i18n="hero_fidelity_l3"></p>
         </div>
       </div>
-    </div>
+
+    <section class="page-doc" id="understanding-overview">
+      <h2 data-i18n="doc_overview_title"></h2>
+      <h3 data-i18n="doc_overview_a_title"></h3>
+      <p data-i18n="doc_overview_a_body"></p>
+      <h3 data-i18n="doc_overview_b_title"></h3>
+      <p data-i18n="doc_overview_b_body"></p>
+      <h3 data-i18n="doc_overview_c_title"></h3>
+      <p data-i18n="doc_overview_c_body"></p>
+      <h3 data-i18n="doc_overview_d_title"></h3>
+      <p data-i18n="doc_overview_d_body"></p>
+      <h3 data-i18n="doc_overview_e_title"></h3>
+      <p data-i18n="doc_overview_e_body"></p>
+    </section>
   `;
 }

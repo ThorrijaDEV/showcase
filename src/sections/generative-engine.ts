@@ -114,7 +114,20 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           </div>
         </div>
       </div>
-    </div>
+
+    <section class="page-doc" id="understanding-gen">
+      <h2 data-i18n="doc_gen_title"></h2>
+      <h3 data-i18n="doc_gen_a_title"></h3>
+      <p data-i18n="doc_gen_a_body"></p>
+      <h3 data-i18n="doc_gen_b_title"></h3>
+      <p data-i18n="doc_gen_b_body"></p>
+      <h3 data-i18n="doc_gen_c_title"></h3>
+      <p data-i18n="doc_gen_c_body"></p>
+      <h3 data-i18n="doc_gen_d_title"></h3>
+      <p data-i18n="doc_gen_d_body"></p>
+      <h3 data-i18n="doc_gen_e_title"></h3>
+      <p data-i18n="doc_gen_e_body"></p>
+    </section>
   `;
 
   // ------------------------------------------------------------------

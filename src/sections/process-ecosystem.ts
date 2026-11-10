@@ -74,7 +74,7 @@ export function renderProcessEcosystem(container: HTMLElement): void {
             </div>
           </div>
           <table id="pem-table">
-            <thead><tr><th>PID</th><th>Comm</th><th>Estado</th><th>CPU%</th><th>RSS (MB)</th><th>Hilos</th><th>Huérfano</th><th>Pico</th></tr></thead>
+            <thead><tr><th data-i18n="pem_table_pid">PID</th><th data-i18n="pem_table_comm">Comm</th><th data-i18n="pem_table_state">Estado</th><th data-i18n="pem_table_cpu">CPU%</th><th data-i18n="pem_table_rss">RSS (MB)</th><th data-i18n="pem_table_threads">Hilos</th><th data-i18n="pem_table_orphan">Huérfano</th><th data-i18n="pem_table_spike">Pico</th></tr></thead>
             <tbody id="pem-table-body"></tbody>
           </table>
         </div>
@@ -114,7 +114,20 @@ export function renderProcessEcosystem(container: HTMLElement): void {
           <div id="pem-alive" style="font-size:28px; font-weight:700; color:var(--fg-blue); font-variant-numeric:tabular-nums;">—</div>
         </div>
       </div>
-    </div>
+
+    <section class="page-doc" id="understanding-pem">
+      <h2 data-i18n="doc_pem_title"></h2>
+      <h3 data-i18n="doc_pem_a_title"></h3>
+      <p data-i18n="doc_pem_a_body"></p>
+      <h3 data-i18n="doc_pem_b_title"></h3>
+      <p data-i18n="doc_pem_b_body"></p>
+      <h3 data-i18n="doc_pem_c_title"></h3>
+      <p data-i18n="doc_pem_c_body"></p>
+      <h3 data-i18n="doc_pem_d_title"></h3>
+      <p data-i18n="doc_pem_d_body"></p>
+      <h3 data-i18n="doc_pem_e_title"></h3>
+      <p data-i18n="doc_pem_e_body"></p>
+    </section>
   `;
 
   // ------------------------------------------------------------------
@@ -181,12 +194,12 @@ export function renderProcessEcosystem(container: HTMLElement): void {
             <td>${p.cpuPct.toFixed(1)}%</td>
             <td>${rssMB}</td>
             <td>${p.numThreads}</td>
-            <td>${p.orphan ? "sí" : "no"}</td>
-            <td>${p.spike ? "sí" : "no"}</td>
+            <td>${p.orphan ? t("pem_yes") : t("pem_no")}</td>
+            <td>${p.spike ? t("pem_yes") : t("pem_no")}</td>
           </tr>
         `;
       }).join("");
-      tableBody.innerHTML = rows || "<tr><td colspan='8' style='color:var(--text-muted);'>Sin procesos</td></tr>";
+      tableBody.innerHTML = rows || `<tr><td colspan='8' style='color:var(--text-muted);'>${t("pem_no_processes")}</td></tr>`;
 
       // Tree
       treeEl.innerHTML = `
@@ -208,8 +221,8 @@ export function renderProcessEcosystem(container: HTMLElement): void {
   function reset() {
     model.reset();
     diffEl.innerHTML = `<div style='color:var(--text-muted);'>${t("pem_reset_done")}</div>`;
-    tableBody.innerHTML = "<tr><td colspan='8' style='color:var(--text-muted);'>Sin procesos</td></tr>";
-    treeEl.innerHTML = `<div style='color:var(--text-muted);' data-i18n="wtm_waiting"></div>`;
+    tableBody.innerHTML = `<tr><td colspan='8' style='color:var(--text-muted);'>${t("pem_no_processes")}</td></tr>`;
+    treeEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
     sysCpuEl.textContent = "—";
     sysRamEl.textContent = "—";
     aliveEl.textContent = "—";

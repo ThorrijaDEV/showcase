@@ -6,7 +6,7 @@
 |-------|----------|-------|--------|
 | Wi-Fi Time Machine | `/home/thorrija/tests/wifi-time-machine.test.ts` | 18 | PASS |
 | BLE Radar | `/home/thorrija/tests/ble-radar.test.ts` | 16 | PASS |
-| Process Ecosystem | `/home/thorjima/tests/process-ecosystem.test.ts` | 22 | PASS |
+| Process Ecosystem | `/home/thorrija/tests/process-ecosystem.test.ts` | 22 | PASS |
 | Generative Engine | `/home/thorrija/tests/generative-engine.test.ts` | 24 | PASS |
 | The Box (kernel/engine/rules) | `/home/thorrija/models/the-box.test.ts` | 42 | PASS |
 | The Box (experimental layer) | `/home/thorrija/models/the-box-experiment.test.ts` | 25 | PASS |

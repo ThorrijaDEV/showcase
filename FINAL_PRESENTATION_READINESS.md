@@ -46,7 +46,7 @@
 | TypeScript compile (models) | Clean |
 | TypeScript compile (showcase) | Clean |
 | Vite production build | Success |
-| PDF generation | Success (25 pages, 7 images) |
+| PDF generation | Success (29 pages, 633,065 bytes) |
 
 ---
 
@@ -78,7 +78,7 @@
 | `/home/thorrija/showcase/SYSTEM_WIDE_VALIDATION.md` | System-wide verification |
 | `/home/thorrija/showcase/PRESENTATION_REHEARSAL_REPORT.md` | Rehearsal results |
 | `/home/thorrija/showcase/FINAL_PRESENTATION_READINESS.md` | This document |
-| `/home/thorrija/report/Thorrija-Engineering-Showcase-Technical-Dossier.pdf` | Technical PDF (25 pages) |
+| `/home/thorrija/report/Thorrija-Engineering-Showcase-Technical-Dossier.pdf` | Technical PDF (29 pages) |
 | `/home/thorrija/report/TECHNICAL_PDF_VALIDATION.md` | PDF validation |
 | `/home/thorrija/report/generate_technical_pdf.py` | PDF generator |
 

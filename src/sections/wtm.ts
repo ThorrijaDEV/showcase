@@ -125,6 +125,20 @@ BSS 00:11:22:33:44:55(Onboard)
       </div>
       <pre id="wtm-export-output" style="font-size:11px; max-height:200px; overflow:auto;">—</pre>
     </div>
+
+    <section class="page-doc" id="understanding-wtm">
+      <h2 data-i18n="doc_wtm_title"></h2>
+      <h3 data-i18n="doc_wtm_a_title"></h3>
+      <p data-i18n="doc_wtm_a_body"></p>
+      <h3 data-i18n="doc_wtm_b_title"></h3>
+      <p data-i18n="doc_wtm_b_body"></p>
+      <h3 data-i18n="doc_wtm_c_title"></h3>
+      <p data-i18n="doc_wtm_c_body"></p>
+      <h3 data-i18n="doc_wtm_d_title"></h3>
+      <p data-i18n="doc_wtm_d_body"></p>
+      <h3 data-i18n="doc_wtm_e_title"></h3>
+      <p data-i18n="doc_wtm_e_body"></p>
+    </section>
   `;
 
   // ------------------------------------------------------------------
@@ -177,7 +191,7 @@ BSS 00:11:22:33:44:55(Onboard)
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#4a4a55";
       ctx.font = "12px monospace";
-      ctx.fillText("(no data)", 20, 30);
+      ctx.fillText(t("wtm_no_data"), 20, 30);
       timelineFooter.textContent = "";
       return;
     }
@@ -251,7 +265,7 @@ BSS 00:11:22:33:44:55(Onboard)
 
   function renderChannels(stats: { channel: number; count: number; avgSignal: number | null }[]): void {
     if (!stats || stats.length === 0) {
-      channelsPre.textContent = "(no data)";
+      channelsPre.textContent = t("wtm_no_data");
       return;
     }
     const lines = stats.map((s) => {
@@ -263,7 +277,7 @@ BSS 00:11:22:33:44:55(Onboard)
 
   function renderSparkline(sl: { rendered: string; min: number; max: number; values: number[] } | null, label: string): void {
     if (!sl) {
-      sparklineDiv.textContent = "(no data)";
+      sparklineDiv.textContent = t("wtm_no_data");
       sparklineStats.textContent = "";
       return;
     }
