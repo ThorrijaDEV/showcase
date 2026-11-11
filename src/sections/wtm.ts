@@ -7,12 +7,20 @@
 
 import { WifiTimeMachineModel, type WifiModelInput } from "@models/wifi-time-machine";
 import { getLang } from "../i18n";
-import { dict } from "../i18n/dict";
+import { dict, type Lang } from "../i18n/dict";
+import { WTM_DESCS } from "../field-descriptions";
 
 function t(key: string): string {
   const entry = dict[key];
   if (!entry) return key;
   return entry[getLang()];
+}
+
+function desc(d: Record<string, { en: string; es: string }>, key: string): string {
+  const entry = d[key];
+  if (!entry) return "";
+  const lang = getLang() as Lang;
+  return entry[lang];
 }
 
 export function renderWifiTimeMachine(container: HTMLElement): void {
@@ -39,6 +47,20 @@ BSS 00:11:22:33:44:55(Onboard)
 `;
 
   container.innerHTML = `
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">What is the Wi-Fi Time Machine?</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">¿Qué es la Wi-Fi Time Machine?</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;">
+A deterministic model of Wi-Fi scanning. It parses a synthetic iw/nmcli scan dump, maps each frequency to its 802.11 channel (2.4/5/6 GHz), deduplicates access points by BSSID keeping the strongest signal, and renders a timeline heatmap, per-channel activity, and a signal sparkline. Export JSON/CSV with optional SHA-256 BSSID sanitization. Nothing is hardcoded — every number is computed from your input.
+
+Un modelo determinista de escaneo Wi-Fi. Parsea un volcado sintético iw/nmcli, mapea cada frecuencia a su canal 802.11 (2.4/5/6 GHz), deduplica puntos de acceso por BSSID manteniendo la señal más fuerte, y renderiza un mapa de calor de tiempo, actividad por canal y un sparkline de señal. Exportación JSON/CSV con desinfección SHA-256 opcional de BSSIDs. Nada está hardcodeado — cada número se calcula a partir de tu entrada.
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -124,6 +146,24 @@ BSS 00:11:22:33:44:55(Onboard)
         <button id="wtm-export-csv" class="btn secondary" data-i18n="wtm_export_csv"></button>
       </div>
       <pre id="wtm-export-output" style="font-size:11px; max-height:200px; overflow:auto;">—</pre>
+    </div>
+
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:13px; color:var(--fg-cyan);">Value meanings · Significado de los valores</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--text-muted); line-height:1.6; padding:8px 12px;">
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">signal (RSSI)</span> <span style="color:var(--text);">${desc(WTM_DESCS, "signal")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">frequency</span> <span style="color:var(--text);">${desc(WTM_DESCS, "frequency")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">channel</span> <span style="color:var(--text);">${desc(WTM_DESCS, "channel")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">BSSID</span> <span style="color:var(--text);">${desc(WTM_DESCS, "bssid")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">SSID</span> <span style="color:var(--text);">${desc(WTM_DESCS, "ssid")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">security</span> <span style="color:var(--text);">${desc(WTM_DESCS, "security")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">avg signal</span> <span style="color:var(--text);">${desc(WTM_DESCS, "avgSignal")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">count</span> <span style="color:var(--text);">${desc(WTM_DESCS, "count")}</span></div>
+      </div>
     </div>
 
     <section class="page-doc" id="understanding-wtm">

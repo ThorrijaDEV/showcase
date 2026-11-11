@@ -13,6 +13,7 @@ import { foundryRuleSet, State, Engine } from "@models/the-box";
 import { interpret, buildExport, exportJson, type Level } from "./the-box-levels";
 import { getLang, applyTranslations } from "../i18n";
 import { dict } from "../i18n/dict";
+import { BOX_INPUT_DESCS, BOX_OBSERVABLE_DESCS, BOX_IDENTITY_DESCS, BOX_RULE_DESCS, BOX_POLICY_DESCS, BOX_WHAT_IS_IT, type Lang } from "../field-descriptions";
 
 function t(key: string): string {
   const entry = dict[key];
@@ -20,10 +21,29 @@ function t(key: string): string {
   return entry[getLang()];
 }
 
+function desc(d: Record<string, { en: string; es: string }>, key: string): string {
+  const entry = d[key];
+  if (!entry) return "";
+  const lang = getLang() as Lang;
+  return entry[lang];
+}
+
 export function renderTheBox(container: HTMLElement): void {
   const model = new TheBoxModel();
 
   container.innerHTML = `
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">What is The Box?</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">¿Qué es The Box?</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius);">
+        <div id="box-what-is-it" style="white-space:pre-wrap;"></div>
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -34,19 +54,26 @@ export function renderTheBox(container: HTMLElement): void {
             </div>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_nnodes"></label>
+          <div class="controls mt-8">
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_nnodes"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "nNodes")}</div>
             <input type="number" id="box-nnodes" value="20" min="1" max="200" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_narcs"></label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_narcs"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "nArcs")}</div>
             <input type="number" id="box-narcs" value="40" min="0" max="400" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_dim"></label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_dim"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "dim")}</div>
             <input type="number" id="box-dim" value="4" min="1" max="8" style="width:60px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_seed"></label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_seed"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "seed")}</div>
             <input type="number" id="box-seed" value="11" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_steps"></label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_steps"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "steps")}</div>
             <input type="number" id="box-steps" value="100" min="1" max="2000" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_policy"></label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_policy"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_POLICY_DESCS, (document.querySelector("#box-policy") as HTMLSelectElement)?.value || "uniform")}</div>
             <select id="box-policy" style="width:120px; font-family:var(--mono); font-size:12px;">
               <option value="uniform">Uniform</option>
               <option value="canonical">Canonical</option>
@@ -55,13 +82,16 @@ export function renderTheBox(container: HTMLElement): void {
             </select>
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_maxnodes"></label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_maxnodes"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "maxNodes")}</div>
             <input type="number" id="box-maxnodes" value="160" min="1" max="1000" style="width:80px; font-family:var(--mono); font-size:12px;">
-            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted);" data-i18n="box_label_maxarcs"></label>
+            <label style="margin-left:20px; font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_maxarcs"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "maxArcs")}</div>
             <input type="number" id="box-maxarcs" value="700" min="1" max="5000" style="width:80px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
-            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:6px;" data-i18n="box_label_tagspread"></label>
+            <label style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:block; margin-bottom:2px;" data-i18n="box_label_tagspread"></label>
+            <div style="font-size:9px; color:var(--text-muted); margin-bottom:6px; font-family:var(--mono);">${desc(BOX_INPUT_DESCS, "tagSpread")}</div>
             <input type="number" id="box-tagspread" value="1" min="1" max="10" style="width:60px; font-family:var(--mono); font-size:12px;">
           </div>
           <div class="controls mt-8">
@@ -255,6 +285,14 @@ export function renderTheBox(container: HTMLElement): void {
 
   applyTranslations();
 
+  // What is The Box explanation
+  const whatIsItEl = container.querySelector("#box-what-is-it")! as HTMLElement;
+  whatIsItEl.textContent = BOX_WHAT_IS_IT[getLang() as Lang];
+
+  document.addEventListener("showcase:lang", () => {
+    whatIsItEl.textContent = BOX_WHAT_IS_IT[getLang() as Lang];
+  });
+
   // ------------------------------------------------------------------
   // Elements
   // ------------------------------------------------------------------
@@ -412,9 +450,13 @@ export function renderTheBox(container: HTMLElement): void {
   function renderObservables(obs: Record<string, number>): void {
     const rows = Object.entries(obs).map(([k, v]) => {
       const label = k.replace(/_/g, " ");
-      return `<div style="display:flex; justify-content:space-between; padding:1px 0;">
-        <span style="color:var(--text-muted);">${label}:</span>
-        <span style="color:var(--text);">${typeof v === "number" ? v.toFixed(4) : v}</span>
+      const d = desc(BOX_OBSERVABLE_DESCS, k);
+      return `<div style="padding:2px 0; border-bottom:1px solid #1a1a1e; margin-bottom:2px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${label}:</span>
+          <span style="color:var(--text);">${typeof v === "number" ? v.toFixed(4) : v}</span>
+        </div>
+        ${d ? `<div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${d}</div>` : ""}
       </div>`;
     }).join("");
     observablesEl.innerHTML = rows;
@@ -422,13 +464,55 @@ export function renderTheBox(container: HTMLElement): void {
 
   function renderIdentity(summary: any): void {
     identityEl.innerHTML = `
-      <div><span style="color:var(--text-muted);">${t("box_identity_max_depth")}:</span> <span style="color:var(--text);">${summary.maxDepth}</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_mean_depth")}:</span> <span style="color:var(--text);">${summary.meanDepth.toFixed(2)}</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_fusion_classes")}:</span> <span style="color:var(--text);">${summary.nFusionClasses}</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_fused_nodes")}:</span> <span style="color:var(--text);">${summary.fusedNodes}</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_fused_fraction")}:</span> <span style="color:var(--text);">${(summary.fusedFraction * 100).toFixed(1)}%</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_equiv_arcs")}:</span> <span style="color:var(--text);">${summary.equivArcs}</span></div>
-      <div><span style="color:var(--text-muted);">${t("box_identity_retired_ids")}:</span> <span style="color:var(--text);">${summary.retiredIds}</span></div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_max_depth")}:</span>
+          <span style="color:var(--text);">${summary.maxDepth}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "maxDepth")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_mean_depth")}:</span>
+          <span style="color:var(--text);">${summary.meanDepth.toFixed(2)}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "meanDepth")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_fusion_classes")}:</span>
+          <span style="color:var(--text);">${summary.nFusionClasses}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "nFusionClasses")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_fused_nodes")}:</span>
+          <span style="color:var(--text);">${summary.fusedNodes}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "fusedNodes")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_fused_fraction")}:</span>
+          <span style="color:var(--text);">${(summary.fusedFraction * 100).toFixed(1)}%</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "fusedFraction")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_equiv_arcs")}:</span>
+          <span style="color:var(--text);">${summary.equivArcs}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "equivArcs")}</div>
+      </div>
+      <div style="padding:2px 0;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">${t("box_identity_retired_ids")}:</span>
+          <span style="color:var(--text);">${summary.retiredIds}</span>
+        </div>
+        <div style="font-size:9px; color:var(--text-muted); margin-top:1px;">${desc(BOX_IDENTITY_DESCS, "retiredIds")}</div>
+      </div>
     `;
   }
 

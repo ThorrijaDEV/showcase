@@ -8,7 +8,8 @@
 
 import { BleRadarModel, type BleModelInput } from "@models/ble-radar";
 import { getLang } from "../i18n";
-import { dict } from "../i18n/dict";
+import { dict, type Lang } from "../i18n/dict";
+import { BLE_DESCS } from "../field-descriptions";
 
 function t(key: string): string {
   const entry = dict[key];
@@ -16,10 +17,31 @@ function t(key: string): string {
   return entry[getLang()];
 }
 
+function desc(d: Record<string, { en: string; es: string }>, key: string): string {
+  const entry = d[key];
+  if (!entry) return "";
+  const lang = getLang() as Lang;
+  return entry[lang];
+}
+
 export function renderBleRadar(container: HTMLElement): void {
   const model = new BleRadarModel();
 
   container.innerHTML = `
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">What is BLE Radar?</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">¿Qué es BLE Radar?</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;">
+A deterministic model of the Bluetooth LE environment. It simulates device observations through a lifecycle state machine (appeared → active → fading → disappeared), applies RSSI EMA smoothing (alpha = 0.4), classifies signals into strength bands (strong / near / mid / far / weak — these are signal strength bands, NOT physical distance), computes a pseudo-angle from the MAC address hash (a visual convention only; BLE provides no real orientation), and supports session replay with a time cursor. Export JSON/CSV with SHA-256 address sanitization. Every number is computed from the model — no real Bluetooth hardware is accessed.
+
+Un modelo determinista del entorno Bluetooth LE. Simula observaciones de dispositivos mediante una máquina de estado de ciclo de vida (aparecido → activo → desvaneciendo → desaparecido), aplica suavizado EMA de RSSI (alpha = 0.4), clasifica las señales en bandas de fuerza (strong / near / mid / far / weak — son bandas de fuerza de señal, NO distancia física), calcula un pseudo-ángulo a partir del hash de la dirección MAC (solo una convención visual; BLE no da orientación real), y soporta reproducción de sesión con cursor de tiempo. Exportación JSON/CSV con desinfección SHA-256 de direcciones. Cada número se calcula desde el modelo — no se accede a hardware Bluetooth real.
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -108,6 +130,22 @@ export function renderBleRadar(container: HTMLElement): void {
         <button id="ble-export-csv" class="btn secondary" data-i18n="ble_export_csv"></button>
       </div>
       <pre id="ble-export-output" style="font-size:11px; max-height:180px; overflow:auto;">—</pre>
+    </div>
+
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:13px; color:var(--fg-cyan);">Value meanings · Significado de los valores</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--text-muted); line-height:1.6; padding:8px 12px;">
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">RSSI</span> <span style="color:var(--text);">${desc(BLE_DESCS, "rssi")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Seen at</span> <span style="color:var(--text);">${desc(BLE_DESCS, "seenAt")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Times seen</span> <span style="color:var(--text);">${desc(BLE_DESCS, "timesSeen")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Appeared / Active / Fading / Disappeared</span> <span style="color:var(--text);">${desc(BLE_DESCS, "appeared")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Strength band</span> <span style="color:var(--text);">${desc(BLE_DESCS, "strengthBand")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Pseudo-angle</span> <span style="color:var(--text);">${desc(BLE_DESCS, "pseudoAngle")}</span></div>
+      </div>
     </div>
 
     <section class="page-doc" id="understanding-ble">

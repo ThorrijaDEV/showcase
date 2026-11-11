@@ -8,12 +8,20 @@
 
 import { ProcessEcosystemModel, type ProcModelInput, type ProcSnapshot } from "@models/process-ecosystem";
 import { getLang } from "../i18n";
-import { dict } from "../i18n/dict";
+import { dict, type Lang } from "../i18n/dict";
+import { PEM_DESCS } from "../field-descriptions";
 
 function t(key: string): string {
   const entry = dict[key];
   if (!entry) return key;
   return entry[getLang()];
+}
+
+function desc(d: Record<string, { en: string; es: string }>, key: string): string {
+  const entry = d[key];
+  if (!entry) return "";
+  const lang = getLang() as Lang;
+  return entry[lang];
 }
 
 const DEFAULT_SNAPS: ProcSnapshot[] = [
@@ -28,6 +36,20 @@ export function renderProcessEcosystem(container: HTMLElement): void {
   const model = new ProcessEcosystemModel();
 
   container.innerHTML = `
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">What is the Process Ecosystem Monitor?</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">¿Qué es el Process Ecosystem Monitor?</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;">
+A deterministic model of the Linux process lifecycle. It parses synthetic /proc-style snapshots, calculates CPU% from jiffy deltas (Δ(utime+stime) / (interval × CLK_TCK × ncores) × 100, per-core normalized), builds the process tree from ppid, handles orphan re-homing and PID-reuse detection, and follows the lifecycle new → active/idle → dying → dead. System CPU/RAM/load metrics are shown per tick. No real /proc is read — all input is synthetic. Every number is computed from the model.
+
+Un modelo determinista del ciclo de vida de procesos Linux. Parsea instantáneas sintéticas de estilo /proc, calcula CPU% a partir de deltas de jiffies (Δ(utime+stime) / (intervalo × CLK_TCK × ncores) × 100, normalizado por núcleo), construye el árbol de procesos desde ppid, maneja la reasignación de huérfanos y la detección de reuso de PID, y sigue el ciclo new → active/idle → dying → dead. Las métricas de CPU/RAM/carga del sistema se muestran por tick. No se lee /proc real — toda la entrada es sintética. Cada número se calcula desde el modelo.
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -114,6 +136,25 @@ export function renderProcessEcosystem(container: HTMLElement): void {
           <div id="pem-alive" style="font-size:28px; font-weight:700; color:var(--fg-blue); font-variant-numeric:tabular-nums;">—</div>
         </div>
       </div>
+
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:13px; color:var(--fg-cyan);">Value meanings · Significado de los valores</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--text-muted); line-height:1.6; padding:8px 12px;">
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">PID</span> <span style="color:var(--text);">${desc(PEM_DESCS, "pid")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">PPID</span> <span style="color:var(--text);">${desc(PEM_DESCS, "ppid")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">UTIME / STIME</span> <span style="color:var(--text);">${desc(PEM_DESCS, "utime")} · ${desc(PEM_DESCS, "stime")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">CPU%</span> <span style="color:var(--text);">${desc(PEM_DESCS, "cpuPct")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">RSS (MB)</span> <span style="color:var(--text);">${desc(PEM_DESCS, "rss")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Threads</span> <span style="color:var(--text);">${desc(PEM_DESCS, "numThreads")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Start time</span> <span style="color:var(--text);">${desc(PEM_DESCS, "starttime")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">State</span> <span style="color:var(--text);">${desc(PEM_DESCS, "state")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Orphan / Spike / Lifecycle</span> <span style="color:var(--text);">${desc(PEM_DESCS, "orphan")} · ${desc(PEM_DESCS, "spike")} · ${desc(PEM_DESCS, "lifecycle")}</span></div>
+      </div>
+    </div>
 
     <section class="page-doc" id="understanding-pem">
       <h2 data-i18n="doc_pem_title"></h2>

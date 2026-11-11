@@ -8,7 +8,8 @@
 
 import { GenerativeEngineModel, type GenModelInput } from "@models/generative-engine";
 import { getLang } from "../i18n";
-import { dict } from "../i18n/dict";
+import { dict, type Lang } from "../i18n/dict";
+import { GEN_DESCS } from "../field-descriptions";
 
 function t(key: string): string {
   const entry = dict[key];
@@ -16,10 +17,31 @@ function t(key: string): string {
   return entry[getLang()];
 }
 
+function desc(d: Record<string, { en: string; es: string }>, key: string): string {
+  const entry = d[key];
+  if (!entry) return "";
+  const lang = getLang() as Lang;
+  return entry[lang];
+}
+
 export function renderGenerativeEngine(container: HTMLElement): void {
   const model = new GenerativeEngineModel();
 
   container.innerHTML = `
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">What is the Terminal Generative Engine?</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">¿Qué es el Terminal Generative Engine?</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;">
+Deterministic procedural generative art. A stateless splitmix64 RNG turns a seed into every pixel value — no PRNG state is kept, so the same seed always produces the same frame (O(1) frame seeking). Three modes: flowfield (analytic sine field driving particles along streamlines), plasma (closed-form per-pixel color fields: classic / rings / mandala / sweep), and attractor (Clifford/Dejong strange map with coefficient probing). Continuous interpolated palettes map values to colors, and a SHA-256 world fingerprint over mode + frame + parameters + pixels gives each world a shareable identity. Every pixel is computed — nothing is hardcoded.
+
+Arte generativo procedimental determinista. Un RNG splitmix64 sin estado convierte una semilla en cada valor de píxel — no se conserva estado de PRNG, por lo que la misma semilla siempre produce el mismo frame (búsqueda O(1) de frames). Tres modos: flowfield (campo analítico de senos que impulsa partículas a lo largo de streamlines), plasma (campos de color cerrados por píxel: classic / rings / mandala / sweep), y attractor (mapa extraño de Clifford/Dejong con sondeo de coeficientes). Paletas continuas interpoladas mapean valores a colores, y una huella dactilar SHA-256 del mundo sobre modo + frame + parámetros + píxeles da a cada mundo una identidad compartible. Cada píxel se calcula — nada está hardcodeado.
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -114,6 +136,21 @@ export function renderGenerativeEngine(container: HTMLElement): void {
           </div>
         </div>
       </div>
+
+    <div class="card mt-16" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:13px; color:var(--fg-cyan);">Value meanings · Significado de los valores</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--text-muted); line-height:1.6; padding:8px 12px;">
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Seed</span> <span style="color:var(--text);">${desc(GEN_DESCS, "seed")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Mode</span> <span style="color:var(--text);">${desc(GEN_DESCS, "mode")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Frame</span> <span style="color:var(--text);">${desc(GEN_DESCS, "frame")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Fingerprint</span> <span style="color:var(--text);">${desc(GEN_DESCS, "fingerprint")}</span></div>
+        <div style="display:flex; justify-content:space-between; margin:2px 0;"><span style="color:var(--text-muted);">Palette</span> <span style="color:var(--text);">${desc(GEN_DESCS, "palette")}</span></div>
+      </div>
+    </div>
 
     <section class="page-doc" id="understanding-gen">
       <h2 data-i18n="doc_gen_title"></h2>
