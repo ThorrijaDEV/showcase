@@ -44,6 +44,18 @@ export function renderTheBox(container: HTMLElement): void {
       </div>
     </div>
 
+    <div class="card mt-8" style="border-left:3px solid var(--accent); background:#0c0c12;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="font-size:15px; color:var(--fg-cyan);">A real research example</div>
+          <div class="card-subtitle" style="font-size:11px; color:var(--text-muted); margin-top:4px;">Un ejemplo de investigación real</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;">
+        <div id="box-real-example" style="white-space:pre-wrap;"></div>
+      </div>
+    </div>
+
     <div class="grid-2">
       <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
         <div class="card">
@@ -289,8 +301,12 @@ export function renderTheBox(container: HTMLElement): void {
   const whatIsItEl = container.querySelector("#box-what-is-it")! as HTMLElement;
   whatIsItEl.textContent = BOX_WHAT_IS_IT[getLang() as Lang];
 
+  const realExampleEl = container.querySelector("#box-real-example")! as HTMLElement;
+  realExampleEl.innerHTML = `<div style="font-weight:600; color:var(--fg-cyan); margin-bottom:6px;">${t("box_real_title")}</div><div style="white-space:pre-wrap;">${t("box_real_body")}</div>`;
+
   document.addEventListener("showcase:lang", () => {
     whatIsItEl.textContent = BOX_WHAT_IS_IT[getLang() as Lang];
+    realExampleEl.innerHTML = `<div style="font-weight:600; color:var(--fg-cyan); margin-bottom:6px;">${t("box_real_title")}</div><div style="white-space:pre-wrap;">${t("box_real_body")}</div>`;
   });
 
   // ------------------------------------------------------------------
