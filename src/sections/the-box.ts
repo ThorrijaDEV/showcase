@@ -14,6 +14,8 @@ import { interpret, buildExport, exportJson, type Level } from "./the-box-levels
 import { getLang, applyTranslations } from "../i18n";
 import { dict } from "../i18n/dict";
 import { BOX_INPUT_DESCS, BOX_OBSERVABLE_DESCS, BOX_IDENTITY_DESCS, BOX_RULE_DESCS, BOX_POLICY_DESCS, BOX_WHAT_IS_IT, type Lang } from "../field-descriptions";
+import { fetchNimExplanation } from "../ai/nim-client";
+import type { NimRequestInput, NimRequestResults, NimExplanation, AiStatus, AiState } from "../ai/nim-types";
 
 function t(key: string): string {
   const entry = dict[key];
@@ -189,6 +191,16 @@ export function renderTheBox(container: HTMLElement): void {
       </div>
     </div>
 
+    <div class="card mt-16" id="box-ai-card" style="border-left:3px solid var(--accent); background:#0c0c12; display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" data-i18n="box_ai_title"></div>
+          <div class="card-subtitle" data-i18n="box_ai_sub"></div>
+        </div>
+      </div>
+      <div id="box-ai-content" style="font-family:var(--mono); font-size:11px; color:var(--text); line-height:1.7; padding:10px 12px; background:#0a0a0c; border:1px solid var(--panel-border); border-radius:var(--radius); white-space:pre-wrap;"></div>
+    </div>
+
     <div class="card mt-16">
       <div class="card-header">
         <div>
@@ -352,6 +364,7 @@ export function renderTheBox(container: HTMLElement): void {
   let currentStep = 0;
   let animationId: number | null = null;
   let isRunning = false;
+  let aiState: AiState = { status: "idle", data: null, error: null };
 
   // Tag colors
   const TAG_COLORS: Record<number, string> = {
@@ -632,6 +645,111 @@ export function renderTheBox(container: HTMLElement): void {
     graphHashEl.textContent = state.graphHash();
   }
 
+  // ------------------------------------------------------------------
+  // AI explanation (NVIDIA NIM via proxy)
+  // ------------------------------------------------------------------
+
+  function requestAiExplanation(output: BoxOutput, lang: "en" | "es"): void {
+    const input = currentInput;
+    if (!input) return;
+
+    const payload: any = {
+      input: {
+        nNodes: input.nNodes,
+        nArcs: input.nArcs,
+        dim: input.dim,
+        seed: input.seed,
+        steps: input.steps,
+        policy: input.policy,
+        tagSpread: input.tagSpread,
+        maxNodes: input.maxNodes,
+        maxArcs: input.maxArcs,
+      },
+      results: {
+        graphHash: output.final.graphHash,
+        nNodes: output.final.nNodes,
+        nArcs: output.final.nArcs,
+        step: output.final.step,
+        haltReason: output.final.halt?.reason ?? null,
+        observables: output.final.observables,
+        identity: output.final.identity,
+        rulesUsed: output.rulesUsed,
+        complexity: output.complexity,
+      },
+      lang,
+    };
+
+    aiState = { status: "loading", data: null, error: null };
+    renderAiCard();
+
+    fetchNimExplanation(payload, lang).then((res: any) => {
+      if (res.notConfigured) {
+        aiState = { status: "not-configured", data: null, error: null };
+      } else if (res.ok && res.explanation && res.realWorldExample) {
+        aiState = {
+          status: "success",
+          data: { explanation: res.explanation, realWorldExample: res.realWorldExample },
+          error: null,
+        };
+      } else {
+        aiState = {
+          status: "error",
+          data: null,
+          error: res.error ?? "Unknown error",
+        };
+      }
+      renderAiCard();
+    }).catch(() => {
+      aiState = { status: "error", data: null, error: "Network error" };
+      renderAiCard();
+    });
+  }
+
+  function renderAiCard(): void {
+    const card = container.querySelector("#box-ai-card") as HTMLElement;
+    const content = container.querySelector("#box-ai-content") as HTMLElement;
+
+    if (aiState.status === "idle") {
+      card.style.display = "none";
+      return;
+    }
+
+    card.style.display = "block";
+
+    const loading = t("box_ai_loading");
+    const error = t("box_ai_error");
+    const retry = t("box_ai_retry");
+    const notConfigured = t("box_ai_not_configured");
+    const explanationLabel = t("box_ai_explanation_label");
+    const exampleLabel = t("box_ai_example_label");
+
+    let html = "";
+    if (aiState.status === "loading") {
+      html = `<div style="color:var(--text-muted);">${loading}</div>`;
+    } else if (aiState.status === "not-configured") {
+      html = `<div style="color:var(--text-muted);">${notConfigured}</div>`;
+    } else if (aiState.status === "error") {
+      html = `
+        <div style="color:var(--fg-red);">${error}: ${aiState.error ?? ""}</div>
+        <div style="margin-top:6px;"><button id="box-ai-retry" style="font-family:var(--mono); font-size:11px; background:transparent; border:1px solid var(--panel-border); color:var(--text); cursor:pointer; padding:2px 8px; border-radius:var(--radius);">${retry}</button></div>
+      `;
+    } else if (aiState.status === "success" && aiState.data) {
+      html = `
+        <div style="font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${explanationLabel}</div>
+        <div style="color:var(--text); margin-bottom:10px; line-height:1.6;">${aiState.data.explanation}</div>
+        <div style="font-weight:600; color:var(--fg-amber); margin-bottom:4px;">${exampleLabel}</div>
+        <div style="color:var(--text); line-height:1.6;">${aiState.data.realWorldExample}</div>
+      `;
+    }
+    content.innerHTML = html;
+
+    // Wire retry button
+    const retryBtn = container.querySelector("#box-ai-retry") as HTMLButtonElement | null;
+    if (retryBtn && aiState.status === "error" && currentInput && currentOutput) {
+      retryBtn.onclick = () => requestAiExplanation(currentOutput!, getLang());
+    }
+  }
+
   function fullRender(input: BoxInput): void {
     try {
       const out = model.run(input);
@@ -659,6 +777,7 @@ export function renderTheBox(container: HTMLElement): void {
       currentEventEl.innerHTML = `<div style="color:var(--text-muted);">${t("box_run_all_label")} · ${t("box_last_rule")}: ${lastStage.ruleId ?? "—"}</div>`;
       currentOutput = out;
       renderLevelView();
+      requestAiExplanation(currentOutput!, getLang());
 
     } catch (e) {
       observablesEl.innerHTML = `<div style="color:var(--fg-red);">Error: ${(e as Error).message}</div>`;
@@ -710,6 +829,9 @@ export function renderTheBox(container: HTMLElement): void {
     identityEl.innerHTML = `<div style='color:var(--text-muted);'>${t("wtm_waiting")}</div>`;
     currentOutput = null;
     renderLevelView();
+    aiState = { status: "idle", data: null, error: null };
+    const aiCard = container.querySelector("#box-ai-card") as HTMLElement;
+    if (aiCard) aiCard.style.display = "none";
   });
 
   levelSimpleBtn.addEventListener("click", () => setLevel("simple"));
@@ -732,7 +854,10 @@ export function renderTheBox(container: HTMLElement): void {
     exportJson(buildExport(currentOutput, "raw", raw));
   });
 
-  document.addEventListener("showcase:lang", () => renderLevelView());
+  document.addEventListener("showcase:lang", () => {
+    renderLevelView();
+    renderAiCard();
+  });
 
   step1Btn.addEventListener("click", () => stepRender());
 

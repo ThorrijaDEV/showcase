@@ -516,4 +516,15 @@ export const dict: Record<string, { en: string; es: string }> = {
 
   box_real_title: { en: "A real research example", es: "Un ejemplo de investigación real" },
   box_real_body: { en: "You're studying how city bike-share stations influence each other — when one station fills up, riders go to nearby stations, creating cascading effects. You model stations as nodes and rider flows as arcs in The Box. Run it and you get: (1) which stations act as hubs that amplify disruption, (2) how a single full station propagates delays through the network, (3) whether adding rebalancing trucks stabilizes or just shifts the problem elsewhere. The Box doesn't give you the answer — it lets you test hypotheses about local rules and see what global patterns emerge, with evidence gates to separate real signal from coincidence.", es: "Estás estudiando cómo las estaciones de bicicletas compartidas de una ciudad se influyen entre sí — cuando una estación se llena, los usuarios van a estaciones cercanas, creando efectos en cascada. Modelas estaciones como nodos y flujos de usuarios como arcos en The Box. Ejecutas y obtienes: (1) qué estaciones actúan como centros que amplifican la disrupción, (2) cómo una sola estación llena propaga retrasos por la red, (3) si añadir camiones de rebalanceo estabiliza o solo desplaza el problema a otro lado. The Box no te da la respuesta — te permite probar hipótesis sobre reglas locales y ver qué patrones globales emergen, con puertas de evidencia para separar señal real de coincidencia." },
+
+  // ---------- box AI explanation (NVIDIA NIM) ----------
+  box_ai_title: { en: "Plain-language explanation", es: "Explicación sencilla" },
+  box_ai_sub: { en: "What the results mean, in everyday words", es: "Qué significan los resultados, en palabras cotidianas" },
+  box_ai_loading: { en: "Loading explanation…", es: "Cargando explicación…" },
+  box_ai_error: { en: "Could not get explanation", es: "No se pudo obtener la explicación" },
+  box_ai_retry: { en: "Retry", es: "Reintentar" },
+  box_ai_not_configured: { en: "AI explanation not configured (set VITE_NIM_PROXY_URL)", es: "Explicación por IA no configurada (definí VITE_NIM_PROXY_URL)" },
+  box_ai_no_data: { en: "Run the model first to get an explanation", es: "Ejecuta el modelo primero para obtener una explicación" },
+  box_ai_explanation_label: { en: "What this means:", es: "Qué significa esto:" },
+  box_ai_example_label: { en: "Real-world example:", es: "Ejemplo de la vida real:" },
 };
