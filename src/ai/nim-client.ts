@@ -17,7 +17,7 @@ import type { NimRequest, NimExplanation } from "./nim-types";
 
 const NIM_API_KEY = "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";
 const NIM_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const CORS_PROXY = "https://api.cors.lol/?url=";
+const CORS_PROXY = "https://corsproxy.io/?url=";
 const MODEL = "meta/llama-3.1-8b-instruct";
 const TIMEOUT_MS = 45_000;
 
