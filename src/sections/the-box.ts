@@ -685,10 +685,10 @@ export function renderTheBox(container: HTMLElement): void {
     fetchNimExplanation(payload, lang).then((res: any) => {
       if (res.notConfigured) {
         aiState = { status: "not-configured", data: null, error: null };
-      } else if (res.ok && res.explanation && res.realWorldExample) {
+      } else if (res.ok && res.explanation) {
         aiState = {
           status: "success",
-          data: { explanation: res.explanation, realWorldExample: res.realWorldExample },
+          data: { explanation: res.explanation, realWorldExample: "" },
           error: null,
         };
       } else {
@@ -734,12 +734,7 @@ export function renderTheBox(container: HTMLElement): void {
         <div style="margin-top:6px;"><button id="box-ai-retry" style="font-family:var(--mono); font-size:11px; background:transparent; border:1px solid var(--panel-border); color:var(--text); cursor:pointer; padding:2px 8px; border-radius:var(--radius);">${retry}</button></div>
       `;
     } else if (aiState.status === "success" && aiState.data) {
-      html = `
-        <div style="font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${explanationLabel}</div>
-        <div style="color:var(--text); margin-bottom:10px; line-height:1.6;">${aiState.data.explanation}</div>
-        <div style="font-weight:600; color:var(--fg-amber); margin-bottom:4px;">${exampleLabel}</div>
-        <div style="color:var(--text); line-height:1.6;">${aiState.data.realWorldExample}</div>
-      `;
+      html = `<div style="color:var(--text); line-height:1.6;">${aiState.data.explanation}</div>`;
     }
     content.innerHTML = html;
 
