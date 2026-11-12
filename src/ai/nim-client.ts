@@ -1,12 +1,15 @@
 /**
- * NVIDIA NIM client — calls NVIDIA NIM directly to explain The Box results.
+ * NVIDIA NIM client — calls NVIDIA NIM to explain The Box results.
+ *
+ * Browsers block direct calls to NVIDIA NIM (CORS policy), so requests are
+ * routed through a public CORS proxy. No backend setup is required — it just
+ * works.
  *
  * SECURITY NOTE: The NVIDIA API key is embedded here so the feature works
- * immediately without any backend setup. Because this repo is public on
- * GitHub, the key is visible in git history. You should rotate it at
- * https://build.nvidia.com when you get a chance.
+ * immediately. Because this repo is public on GitHub, the key is visible in
+ * git history. Rotate it at https://build.nvidia.com when you get a chance.
  *
- * Endpoint: https://integrate.api.nvidia.com/v1/chat/completions
+ * Endpoint: https://integrate.api.nvidia.com/v1/chat/completions (via CORS proxy)
  * Model: meta/llama-3.1-8b-instruct
  */
 
@@ -14,8 +17,9 @@ import type { NimRequest, NimExplanation } from "./nim-types";
 
 const NIM_API_KEY = "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";
 const NIM_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+const CORS_PROXY = "https://api.cors.lol/?url=";
 const MODEL = "meta/llama-3.1-8b-instruct";
-const TIMEOUT_MS = 30_000;
+const TIMEOUT_MS = 45_000;
 
 export async function fetchNimExplanation(
   payload: NimRequest,
@@ -25,7 +29,8 @@ export async function fetchNimExplanation(
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
 
   try {
-    const res = await fetch(NIM_URL, {
+    const target = CORS_PROXY + encodeURIComponent(NIM_URL);
+    const res = await fetch(target, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${NIM_API_KEY}`,
