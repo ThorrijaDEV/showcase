@@ -5,6 +5,7 @@
  * Zero configuration: no CORS, no network, no secrets.
  * Uses everyday language, varies the example each time (based on seed), and
  * keeps technical jargon out — or explains it at the end.
+ * Real examples use the model's actual data so you see what YOUR run means.
  */
 
 import type { BoxOutput } from "@models/the-box";
@@ -21,17 +22,33 @@ const RULE_NAMES: Record<string, { en: string; es: string }> = {
 };
 
 const EXAMPLES_EN = [
-  "Imagine a city's bike-share stations: each station is a dot, and every rider trip is a line between dots. When stations start acting the same way, The Box groups them together. Then some stations spawn new ones nearby, creating chains of influence that spread through the whole city.",
-  "Think of a school classroom: every student is a dot, and every time two students talk, a line appears between them. If two groups start behaving alike, The Box sees them as one group. New students join and copy the habits of their neighbors, so ideas spread like waves through the class.",
-  "Picture an ant colony: each ant is a dot, and every trail they leave is a line. The Box notices which ants do similar things and treats them as a team. New ants are born and follow the trails of older ones, building a network that grows more organized with every step.",
-  "Imagine a group chat: every person is a dot, and every reply they send is a line. The Box watches who talks to whom and which patterns repeat. Over time, the chat organizes itself into clusters, and some messages spark new conversations that branch out like a family tree.",
+  // bike-share
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Imagine ${nNodes} bike-share stations in a city. Each station is a dot, and every rider trip is a line between dots — you ended up with ${nArcs} trips recorded. The Box found ${fused} stations that behave the same way and grouped them into ${Math.max(1, Math.round(fused / 3))} types. Some stations spawned new ones nearby, creating chains of influence up to ${depth} steps long. The rule "${topRule}" was the city's main rebalancing truck — it did the most work moving bikes around.`,
+  // classroom
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Picture ${nNodes} students in a classroom. Each student is a dot, and every time two students talk, a line appears — you have ${nArcs} conversations recorded. The Box spotted ${fused} students who act alike and treated them as one group. New students joined and copied their neighbors, so ideas spread like waves through the class, reaching up to ${depth} steps deep.`,
+  // ant colony
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Think of ${nNodes} ants in a colony. Each ant is a dot, and every trail they leave is a line — you recorded ${nArcs} trails. The Box noticed which ${fused} ants do similar things and treated them as one team. New ants were born and followed older ants' trails, building a network that grew more organized, with influence chains up to ${depth} ants long.`,
+  // group chat
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Imagine a group chat with ${nNodes} people. Each person is a dot, and every reply they send is a line — you captured ${nArcs} messages. The Box watched who talks to whom and found ${fused} people who chat alike. Some messages sparked new conversations that branched out like a family tree, with chains up to ${depth} replies deep. The rule "${topRule}" was the most active voice in the chat.`,
 ];
 
 const EXAMPLES_ES = [
-  "Imagina las estaciones de bicicletas compartidas de una ciudad: cada estación es un punto, y cada viaje en bicicleta es una línea entre puntos. Cuando las estaciones empiezan a comportarse igual, The Box las agrupa. Luego algunas estaciones crean otras nuevas cerca, formando cadenas de influencia que se extienden por toda la ciudad.",
-  "Piensa en un salón de clase: cada estudiante es un punto, y cada vez que dos estudiantes hablan aparece una línea entre ellos. Si dos grupos empiezan a comportarse de forma parecida, The Box los ve como un solo grupo. Nuevos estudiantes se unen y copian los hábitos de sus vecinos, así las ideas se propagan como ondas por el aula.",
-  "Imagina una colonia de hormigas: cada hormiga es un punto, y cada rastro que dejan es una línea. The Box nota qué hormigas hacen cosas similares y las trata como un equipo. Nacen nuevas hormigas y siguen los rastros de las más viejas, construyendo una red que se vuelve más organizada con cada paso.",
-  "Imagina un chat grupal: cada persona es un punto, y cada respuesta que envían es una línea. The Box observa quién habla con quién y qué patrones se repiten. Con el tiempo, el chat se organiza en grupos, y algunos mensajes provocan nuevas conversaciones que se ramifican como un árbol genealógico.",
+  // bike-share
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Imagina ${nNodes} estaciones de bicicletas compartidas en una ciudad. Cada estación es un punto, y cada viaje en bici es una línea entre puntos — registraste ${nArcs} viajes. The Box encontró ${fused} estaciones que se comportan igual y las agrupó en ${Math.max(1, Math.round(fused / 3))} tipos. Algunas estaciones crearon otras nuevas cerca, formando cadenas de influencia de hasta ${depth} pasos. La regla "${topRule}" fue el camión principal de rebalanceo: el que más trabajó moviendo bicis por la red.`,
+  // classroom
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Piensa en ${nNodes} estudiantes en un salón. Cada estudiante es un punto, y cada vez que dos hablan aparece una línea — tienes ${nArcs} conversaciones. The Box detectó a ${fused} estudiantes que actúan parecido y los trató como un grupo. Nuevos se unieron y copiaron a sus vecinos, así las ideas se propagaron como ondas, llegando hasta ${depth} pasos de profundidad.`,
+  // ant colony
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Imagina ${nNodes} hormigas en una colonia. Cada hormiga es un punto, y cada rastro que dejan es una línea — registraste ${nArcs} rastros. The Box notó que ${fused} hormigas hacen cosas similares y las trató como un equipo. Nacieron nuevas hormigas y siguieron los rastros de las viejas, construyendo una red más organizada, con cadenas de influencia de hasta ${depth} hormigas de largo.`,
+  // group chat
+  (nNodes: number, nArcs: number, fused: number, depth: number, topRule: string) =>
+    `Imagina un chat grupal con ${nNodes} personas. Cada persona es un punto, y cada respuesta es una línea — capturaste ${nArcs} mensajes. The Box observó quién habla con quién y encontró a ${fused} personas que chatean igual. Algunos mensajes provocaron nuevas conversaciones que se ramificaron como un árbol genealógico, con cadenas de hasta ${depth} respuestas. La regla "${topRule}" fue la voz más activa del chat.`,
 ];
 
 const RESEARCH_EXAMPLES_EN = [
@@ -56,7 +73,7 @@ const RESEARCH_EXAMPLES_EN = [
 const RESEARCH_EXAMPLES_ES = [
   {
     title: "Curar el cáncer",
-    text: "Los científicos podrían modelar cada célula cancerosa como un punto y cada señal que envía como un arco. The Box encontraría qué células actúan como 'líderes' (clases de fusión), qué señales se propagan más rápido (profundidad de linaje), y qué medicamentos rompen las cadenas (nodos retirados). Es como tener un microscopio que no solo ve células, sino las reglas ocultas que deciden si un tumor crece o muere.",
+    text: "Los científicos podrían modelar cada célula cancerosa como un punto y cada señal que envía como un arco. The Box encontraría qué células actúan como 'líderes' (clases de fusión), qué señales se propagan más rápido (profundidad de linaje) y qué medicamentos rompen las cadenas (nodos retirados). Es como tener un microscopio que no solo ve células, sino las reglas ocultas que deciden si un tumor crece o muere.",
   },
   {
     title: "Entender el cerebro",
@@ -151,7 +168,13 @@ export function explainLocally(output: BoxOutput, lang: "en" | "es"): NimExplana
     }
   }
 
-  const explanation = lang === "es" ? exampleES(seed) : exampleEN(seed);
+  const topRule = rules ? Object.entries(rules).sort((a: any, b: any) => b[1] - a[1])[0] : null;
+  const topRuleName = topRule ? (RULE_NAMES[topRule[0]]?.[lang] ?? topRule[0]) : (lang === "es" ? "una regla" : "a rule");
+
+  const realExample = lang === "es"
+    ? pick(EXAMPLES_ES, seed)(f.nNodes, f.nArcs, id.fusedNodes, id.maxDepth, topRuleName)
+    : pick(EXAMPLES_EN, seed)(f.nNodes, f.nArcs, id.fusedNodes, id.maxDepth, topRuleName);
+
   const research: any = lang === "es" ? researchES(seed) : researchEN(seed);
   const glossary = lang === "es" ? glossaryES() : glossaryEN();
 
@@ -160,7 +183,7 @@ export function explainLocally(output: BoxOutput, lang: "en" | "es"): NimExplana
   <div style="font-weight:600; color:var(--fg-cyan); margin-bottom:4px;">${lang === "es" ? "Qué significa esto:" : "What this means:"}</div>
   <div style="margin-bottom:8px;">${parts.join(" ")}</div>
   <div style="font-weight:600; color:var(--fg-amber); margin-bottom:4px; margin-top:8px;">${lang === "es" ? "Ejemplo de la vida real:" : "Real-world example:"}</div>
-  <div style="color:var(--text-muted); margin-bottom:8px;">${explanation}</div>
+  <div style="color:var(--text-muted); margin-bottom:8px;">${realExample}</div>
   <div style="font-weight:600; color:var(--fg-purple); margin-bottom:4px; margin-top:8px;">${lang === "es" ? "Un ejemplo increíble de investigación:" : "An amazing research example:"}</div>
   <div style="background:#0a0a0c; border:1px solid var(--panel-border); border-radius:4px; padding:8px; font-size:10px; color:var(--text);">${research.title}: ${research.text}</div>
   ${glossary}
@@ -172,14 +195,6 @@ export function explainLocally(output: BoxOutput, lang: "en" | "es"): NimExplana
     explanation: explanationHtml,
     realWorldExample: "",
   };
-}
-
-function exampleEN(seed: number): string {
-  return pick(EXAMPLES_EN, seed);
-}
-
-function exampleES(seed: number): string {
-  return pick(EXAMPLES_ES, seed);
 }
 
 function researchEN(seed: number): string {
